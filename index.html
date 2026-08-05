@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Own US Stocks from Anywhere — Academy</title>
+  <meta name="description" content="A free, step-by-step guide to owning tokenized US stocks, gold, and US Treasury exposure — starting with $100, no brokerage account. Educational content only." />
+  <style>
+    :root {
+      --bg: #0b0d12;
+      --card: #141821;
+      --line: #222a38;
+      --ink: #e7ecf3;
+      --muted: #93a0b4;
+      --accent: #3b82f6;
+      --ok: #7ee0a1;
+      --warn: #f0b45c;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+    }
+    main { max-width: 680px; margin: 0 auto; padding: 40px 20px 32px; }
+    header.brand { display: flex; align-items: center; gap: 10px; margin-bottom: 40px; }
+    .brand-mark {
+      width: 30px; height: 30px; border-radius: 8px;
+      background: linear-gradient(135deg, #3b82f6, #7c5cf0);
+      display: inline-block;
+    }
+    .brand-name { font-weight: 700; letter-spacing: .16em; font-size: .85rem; color: var(--muted); }
+    h1 { font-size: clamp(1.7rem, 5.5vw, 2.4rem); line-height: 1.18; margin: 0 0 16px; letter-spacing: -.01em; }
+    p.lead { color: var(--muted); font-size: 1.08rem; margin: 0 0 12px; }
+    p.variant-note { color: var(--warn); font-size: .92rem; margin: 0 0 12px; }
+    .card {
+      background: var(--card); border: 1px solid var(--line);
+      border-radius: 16px; padding: 24px; margin: 28px 0;
+    }
+    .card h2 { font-size: 1.05rem; margin: 0 0 8px; }
+    label { display: block; font-size: .88rem; color: var(--muted); margin-bottom: 8px; }
+    .row { display: flex; flex-direction: column; gap: 10px; }
+    input[type=email] {
+      width: 100%; padding: 14px; border-radius: 10px;
+      border: 1px solid #2a3444; background: #0e131b; color: var(--ink); font-size: 1rem;
+    }
+    input[type=email]:focus { outline: 2px solid var(--accent); border-color: transparent; }
+    button.cta {
+      width: 100%; padding: 14px; border: 0; border-radius: 10px;
+      background: var(--accent); color: #fff; font-size: 1rem; font-weight: 600; cursor: pointer;
+    }
+    button.cta:hover { filter: brightness(1.08); }
+    .fine { color: var(--muted); font-size: .78rem; margin-top: 12px; }
+    #form-msg { margin-top: 12px; font-size: .92rem; min-height: 1.3em; }
+    #form-msg.ok { color: var(--ok); }
+    #form-msg.err { color: var(--warn); }
+    #join-consent {
+      display: none; margin-top: 14px; padding: 14px; border-radius: 10px;
+      border: 1px solid #34405a; background: #101623; font-size: .9rem; color: var(--muted);
+    }
+    #join-consent button { margin-top: 10px; }
+    section { margin: 36px 0; }
+    section h2 { font-size: 1.25rem; margin: 0 0 14px; }
+    ul.learn { padding-left: 0; list-style: none; margin: 0; }
+    ul.learn li {
+      padding: 10px 0 10px 30px; position: relative; color: var(--muted);
+      border-bottom: 1px solid #171d29;
+    }
+    ul.learn li::before { content: "→"; position: absolute; left: 4px; color: var(--accent); }
+    .trust { display: grid; gap: 14px; }
+    .trust .t {
+      background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px;
+    }
+    .trust .t strong { display: block; margin-bottom: 4px; }
+    .trust .t span { color: var(--muted); font-size: .92rem; }
+    .trust a { color: var(--accent); text-decoration: none; }
+    ul.risks { padding-left: 18px; color: var(--muted); margin: 0; }
+    ul.risks li { margin: 8px 0; }
+    footer {
+      border-top: 1px solid var(--line); margin-top: 40px; padding: 24px 0 8px;
+      color: var(--muted); font-size: .8rem;
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer p { margin: 0 0 10px; }
+    #consent-banner {
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+      background: #10151f; border-top: 1px solid #2a3444;
+      padding: 16px 20px; display: none;
+    }
+    #consent-banner .inner {
+      max-width: 680px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px;
+    }
+    #consent-banner p { margin: 0; font-size: .88rem; color: var(--muted); }
+    #consent-banner .btns { display: flex; gap: 10px; }
+    #consent-banner button {
+      flex: 1; padding: 11px; border-radius: 8px; border: 0; font-size: .95rem; font-weight: 600; cursor: pointer;
+    }
+    #consent-accept { background: var(--accent); color: #fff; }
+    #consent-decline { background: #1c2432; color: var(--muted); }
+    @media (min-width: 560px) {
+      #consent-banner .inner { flex-direction: row; align-items: center; }
+      #consent-banner .btns { flex: 0 0 auto; width: 260px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-name">ACADEMY</span>
+    </header>
+
+    <h1 id="headline">Own NVIDIA, Tesla, Apple and the S&amp;P&nbsp;500 — from anywhere.</h1>
+    <p class="lead" id="subhead">Starting with $100, in about 10 minutes. No brokerage account, no minimums, no paperwork to start. A free AI guide walks you through it, step by step.</p>
+    <p class="variant-note" id="variant-note" hidden></p>
+
+    <div class="card">
+      <h2>Get the free course by email</h2>
+      <form id="capture-form">
+        <div class="row">
+          <label for="email">Short lessons, plain English, real screenshots — from “what is this?” to your first $100 in your own hands.</label>
+          <input id="email" name="email" type="email" required autocomplete="email" placeholder="you@example.com" inputmode="email" />
+          <button class="cta" type="submit">Start learning — it’s free</button>
+        </div>
+      </form>
+      <div id="join-consent" role="alertdialog" aria-live="polite">
+        One step before we enroll you: to send the course we store your e-mail, and we use one first-party analytics cookie to remember your progress. No third-party trackers, no ad pixels. Details in the data notice below.
+        <button class="cta" id="join-consent-accept" type="button">Agree &amp; join</button>
+      </div>
+      <div id="form-msg" role="status"></div>
+      <p class="fine">Free educational course delivered by e-mail. No spam, unsubscribe anytime. By joining you accept the data notice in the footer.</p>
+    </div>
+
+    <section>
+      <h2>What you’ll learn</h2>
+      <ul class="learn">
+        <li>What tokenized assets are: real US stocks, gold, and US Treasury exposure held 1:1 by regulated issuers — and how that differs from the synthetic schemes that collapsed.</li>
+        <li>How to set up a wallet only you control, in about 30 seconds — no seed phrase to start.</li>
+        <li>How to fund it with $100 by card, with every fee shown before you pay.</li>
+        <li>How to make your first purchase, read a live quote, and sell whenever you want — markets on these rails run 24/7.</li>
+        <li>How to secure everything so only you can touch it.</li>
+        <li>What can go wrong — every risk, stated plainly, before any step.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Why trust this</h2>
+      <div class="trust">
+        <div class="t">
+          <strong>Regulated issuers, published proof.</strong>
+          <span>Every asset we teach is issued 1:1 by regulated companies — such as <a href="https://backed.fi" rel="noopener">Backed</a> (tokenized stocks) and <a href="https://paxos.com" rel="noopener">Paxos</a> (vaulted gold) — with public proof-of-reserves you can check yourself. Don’t take our word for it; we show you where to look.</span>
+        </div>
+        <div class="t">
+          <strong>We never hold your money.</strong>
+          <span>You act in your own self-custody wallet, on your own screen. We teach and link — we never take deposits, never sign transactions, never touch your assets.</span>
+        </div>
+        <div class="t">
+          <strong>Risks before benefits.</strong>
+          <span>Every lesson names what can go wrong before what can go right. We never tell you which asset to pick — we explain how each works, and the choice is yours.</span>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>What can go wrong</h2>
+      <ul class="risks">
+        <li><strong>Issuer risk:</strong> tokens are claims on assets held by the issuer — you carry counterparty exposure to that company.</li>
+        <li><strong>Price risk:</strong> stocks, gold, and bond funds move down as well as up. Yield on Treasury products is variable and never promised.</li>
+        <li><strong>Self-custody responsibility:</strong> only you hold the keys — which also means recovering from mistakes is on you. The course teaches the safety steps in order.</li>
+        <li><strong>No deposit insurance:</strong> these are not bank deposits and are not covered by deposit-protection schemes.</li>
+      </ul>
+    </section>
+
+    <footer>
+      <p id="disclaimer"><strong>Educational content only.</strong> Nothing on this page or in the course is investment advice, a recommendation, or an offer of securities. Tokenized assets involve risk, including loss of value. No returns are promised. Availability of specific products depends on your jurisdiction.</p>
+      <p><strong>Data notice:</strong> if you join, we store your e-mail to deliver the course. With your consent, we use one first-party analytics cookie to understand how this page is used. No third-party trackers, no ad pixels. To remove your data, reply “delete” to any e-mail. <a href="#" id="reopen-consent">Cookie &amp; data preferences</a></p>
+      <p>An educational project by <a href="https://ganexxa.com" rel="noopener">Ganexxa</a> · © 2026</p>
+    </footer>
+  </main>
+
+  <div id="consent-banner">
+    <div class="inner">
+      <p>We’d like to use <strong>one first-party analytics cookie</strong> to understand how this page is used and remember your progress. No third-party trackers, no ad pixels. Details in the data notice at the bottom of the page.</p>
+      <div class="btns">
+        <button id="consent-accept" type="button">Accept</button>
+        <button id="consent-decline" type="button">Decline</button>
+      </div>
+    </div>
+  </div>
+
+  <noscript>
+    <div style="max-width:680px;margin:0 auto;padding:0 20px 24px;color:#f0b45c;font-size:.9rem;">
+      This page needs JavaScript to enroll you in the course.
+    </div>
+  </noscript>
+
+  <script>
+    (function () {
+      "use strict";
+
+      /* ---------------- CDP config (see PUBLISH.md) ---------------- */
+      var CDP_ENDPOINT = "https://cdp-collector-393377865620.us-central1.run.app";
+      var CDP_WRITE_KEY = "wk_live_530fc5cd65d1de941914ba8268167246"; // client-side write key: public by design
+      var CDP_TENANT = "ganexxa";
+      var PIPELINE = "academy-xstocks";
+
+      /* ---------------- A/B/C variant ---------------- */
+      var VARIANTS = {
+        a: {
+          h1: "Own NVIDIA, Tesla, Apple and the S&P 500 — from anywhere.",
+          title: "Own US Stocks from Anywhere — Academy",
+          note: ""
+        },
+        b: {
+          h1: "Own real vaulted gold from your phone — starting with $100.",
+          title: "Own Real Vaulted Gold from Your Phone — Academy",
+          note: ""
+        },
+        c: {
+          h1: "Earn US Treasury yield in dollars — from anywhere.",
+          title: "Earn US Treasury Yield in Dollars — Academy",
+          note: "Yield on Treasury-backed products is variable — it moves with short-term US rates and is never promised. The course shows exactly how it works."
+        }
+      };
+      var variant = "a";
+      try {
+        var q = new URLSearchParams(window.location.search).get("v");
+        if (q && VARIANTS[q.toLowerCase()]) variant = q.toLowerCase();
+      } catch (e) {}
+      (function applyVariant() {
+        var v = VARIANTS[variant];
+        var h = document.getElementById("headline");
+        // h1 uses textContent (safe); the &-entity in variant A is a literal char here
+        h.textContent = v.h1.replace("&amp;", "&");
+        document.title = v.title;
+        if (v.note) {
+          var n = document.getElementById("variant-note");
+          n.textContent = v.note;
+          n.hidden = false;
+        }
+      })();
+
+      /* ---------------- Consent-gated CDP loader ----------------
+         LGPD rule: NOTHING is requested from the collector until consent
+         is granted — the snippet itself is only injected after "Accept"
+         (or when a previous visit already granted). Decline = zero requests. */
+      var cdpRequested = false;
+      var cdpLoaded = false;
+      var cdpFailed = false;
+      var onCdpReady = [];
+
+      function consentState() {
+        try {
+          var m = document.cookie.match(/(?:^|; )cdp_consent=([^;]*)/);
+          var c = (m && decodeURIComponent(m[1])) || window.localStorage.getItem("cdp_consent");
+          return c === "granted" || c === "denied" ? c : "unknown";
+        } catch (e) { return "unknown"; }
+      }
+
+      function persistConsent(v) {
+        try { window.localStorage.setItem("cdp_consent", v); } catch (e) {}
+        try { document.cookie = "cdp_consent=" + v + "; Path=/; Max-Age=31536000; SameSite=Lax"; } catch (e) {}
+        /* LGPD proof-of-consent: record when the grant happened */
+        if (v === "granted") {
+          try {
+            if (!window.localStorage.getItem("cdp_consent_ts")) {
+              window.localStorage.setItem("cdp_consent_ts", new Date().toISOString());
+            }
+          } catch (e) {}
+        }
+      }
+
+      function loadCdp() {
+        if (cdpRequested) return;
+        cdpRequested = true;
+        var s = document.createElement("script");
+        s.src = CDP_ENDPOINT + "/cdp.js";
+        s.setAttribute("data-write-key", CDP_WRITE_KEY);
+        s.setAttribute("data-tenant", CDP_TENANT);
+        s.setAttribute("data-endpoint", CDP_ENDPOINT);
+        s.onload = function () {
+          cdpLoaded = true;
+          try {
+            window.CDP.track("lp_variant_view", { variant: variant, pipeline: PIPELINE });
+          } catch (e) {}
+          var fns = onCdpReady; onCdpReady = [];
+          for (var i = 0; i < fns.length; i++) { try { fns[i](); } catch (e) {} }
+        };
+        s.onerror = function () { cdpFailed = true; cdpRequested = false; };
+        document.head.appendChild(s);
+      }
+
+      function whenCdpReady(fn) {
+        if (cdpLoaded) { fn(); return; }
+        onCdpReady.push(fn);
+        loadCdp();
+      }
+
+      /* ---------------- Consent banner ---------------- */
+      var banner = document.getElementById("consent-banner");
+      function showBanner() { banner.style.display = "block"; }
+      function hideBanner() { banner.style.display = "none"; }
+
+      document.getElementById("consent-accept").addEventListener("click", function () {
+        persistConsent("granted");
+        hideBanner();
+        loadCdp();
+      });
+      document.getElementById("consent-decline").addEventListener("click", function () {
+        persistConsent("denied");
+        hideBanner();
+      });
+      document.getElementById("reopen-consent").addEventListener("click", function (e) {
+        e.preventDefault();
+        showBanner();
+      });
+
+      if (consentState() === "granted") { loadCdp(); }
+      else if (consentState() === "unknown") { showBanner(); }
+      /* denied → no banner nag, no script, zero requests */
+
+      /* ---------------- Email capture ----------------
+         The lead is NEVER silently dropped: without consent the submit
+         opens an inline agree step; success only shows after identify
+         is actually dispatched to a loaded snippet. */
+      var form = document.getElementById("capture-form");
+      var msg = document.getElementById("form-msg");
+      var joinConsent = document.getElementById("join-consent");
+      var pendingEmail = null;
+
+      function setMsg(text, cls) { msg.textContent = text; msg.className = cls || ""; }
+
+      function dispatchIdentify(email) {
+        whenCdpReady(function () {
+          try {
+            var consentTs = null;
+            try { consentTs = window.localStorage.getItem("cdp_consent_ts"); } catch (e) {}
+            window.CDP.identify(email, { variant: variant, pipeline: PIPELINE, consent_ts: consentTs });
+            setMsg("You’re in. The first lesson is on its way to your inbox.", "ok");
+            form.reset();
+            joinConsent.style.display = "none";
+            pendingEmail = null;
+          } catch (e) {
+            setMsg("Something went wrong on our side — please try again in a few minutes.", "err");
+          }
+        });
+        /* If the snippet failed to load (collector unreachable), be honest. */
+        setTimeout(function () {
+          if (cdpFailed && !cdpLoaded) {
+            setMsg("Something went wrong on our side — please try again in a few minutes.", "err");
+          }
+        }, 4000);
+      }
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var input = document.getElementById("email");
+        if (!input.checkValidity()) { input.reportValidity(); return; }
+        var email = input.value.trim();
+        if (consentState() === "granted") {
+          dispatchIdentify(email);
+        } else {
+          pendingEmail = email;
+          joinConsent.style.display = "block";
+          setMsg("", "");
+        }
+      });
+
+      document.getElementById("join-consent-accept").addEventListener("click", function () {
+        persistConsent("granted");
+        hideBanner();
+        if (pendingEmail) { dispatchIdentify(pendingEmail); }
+      });
+    })();
+  </script>
+</body>
+</html>
