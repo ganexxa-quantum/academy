@@ -1,0 +1,157 @@
+<!doctype html>
+<!-- ============================================================
+  Ganexxa — first-step LP — cell C-EN (source=firststep-en-x)
+  [default 1 — Bruno confirms if a public live curve exists]:
+  no live curve embedded; teaser shows backtests + "live tracking
+  begins coming soon".
+  [confirmed — Bruno 2026-08-08]: static GitHub Pages host, no backend;
+  capture via {{CDP_ENDPOINT}}; pixel slot {{PIXEL_ID}};
+  Telegram via {{TG_INVITE}}. Placeholders — zero real IDs.
+  Compliance: education-framed; entity.yaml banlist respected;
+  no offer, no intermediaries, no return promises.
+============================================================ -->
+<html lang="en">
+<head>
+  <meta name="robots" content="noindex,nofollow">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The honest backtest — systematic trading, explained | Ganexxa</title>
+  <meta name="description" content="Education on systematic trading: how an algorithm decides, why a backtest is a hypothesis, and how to watch a live track record form with full transparency.">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body data-cell="firststep-en-x"
+      data-cdp="{{CDP_ENDPOINT}}"
+      data-pixel="{{PIXEL_ID}}"
+      data-tg="{{TG_INVITE}}">
+
+  <header class="site-header wrap">
+    <a class="brand" href="#">Ganexxa
+      <small>systematic trading education</small>
+    </a>
+    <a class="header-cta" href="#capture">Follow the curve</a>
+  </header>
+
+  <main>
+    <section class="hero wrap">
+      <p class="kicker">Education · Systematic trading</p>
+      <h1>The honest backtest.</h1>
+      <p class="sub">Tired of being rugged? Everyone promises returns. We'd rather show
+        you the system: rules written in code, tested on historical data, executed
+        without emotion — and explained in plain English.</p>
+      <p class="motto">“No gurus. No hype. Just the algorithm, in the open.”</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#capture">Follow the live curve</a>
+        <a class="btn btn-ghost" href="#education">How it works</a>
+      </div>
+    </section>
+
+    <section id="education" class="alt">
+      <div class="wrap">
+        <h2>What systematic trading is — and why algorithms beat hands</h2>
+        <div class="cards">
+          <article class="card">
+            <h3>Rules, not vibes</h3>
+            <p>In a system, every decision — what to trade, how much, when to exit —
+              is written in code before a single trade happens. No mid-trade
+              “feeling”: the rule decides, and the rule can be audited.</p>
+          </article>
+          <article class="card">
+            <h3>A backtest is a hypothesis</h3>
+            <p>A backtest runs the rules on historical data to estimate how the
+              system would have behaved. It's a study tool — not a crystal ball.
+              Past results owe you nothing, and anyone claiming otherwise is
+              selling something.</p>
+          </article>
+          <article class="card">
+            <h3>Why not manual?</h3>
+            <p>Humans trade with fear, greed and fatigue. An algorithm applies the
+              same rule to trade one thousand with the same discipline as trade
+              one. The methodology we follow (Robert Carver) sizes positions by
+              risk and diversifies for real.</p>
+          </article>
+          <article class="card">
+            <h3>Gurus post screenshots. Systems publish everything.</h3>
+            <p>A profit screenshot isn't evidence — it's marketing. Evidence is
+              open methodology, explained rules, and a published curve with wins
+              AND losses, unedited. That's what serious education looks like.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="transparency">
+      <div class="wrap teaser-grid">
+        <div class="chart-frame">
+          <svg viewBox="0 0 400 220" role="img" aria-label="Illustrative backtest curve, with ups and downs">
+            <g stroke="var(--chart-grid)" stroke-width="1">
+              <line x1="0" y1="55"  x2="400" y2="55"/>
+              <line x1="0" y1="110" x2="400" y2="110"/>
+              <line x1="0" y1="165" x2="400" y2="165"/>
+            </g>
+            <polyline fill="none" stroke="var(--chart-line)" stroke-width="2.5"
+              points="0,185 28,176 55,182 82,158 108,164 135,138 160,150 188,124 214,131 240,108 266,118 292,92 318,102 344,78 372,86 400,64"/>
+            <text x="12" y="26" fill="var(--ink-faint)" font-size="12" letter-spacing="2">ILLUSTRATIVE</text>
+          </svg>
+          <p class="chart-caption">Illustrative curve — does not represent real backtest or trading results.</p>
+        </div>
+        <div class="teaser-copy">
+          <h2>Radical transparency: watch the curve form</h2>
+          <ul>
+            <li><strong>Documented backtests</strong> — methodology, assumptions and
+              limitations explained, not just a pretty chart.</li>
+            <li><strong>A live curve, published</strong> — once tracking starts, you
+              see wins and losses in real time, unedited.</li>
+            <li><strong>Zero promises</strong> — a backtest is not a result. If you
+              follow along, you'll understand exactly why.</li>
+          </ul>
+          <span class="live-flag"><span class="dot"></span>
+            Live tracking begins <strong>&nbsp;coming soon</strong>
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <section id="capture" class="alt">
+      <div class="wrap">
+        <div class="capture">
+          <h2>Get the live curve in your inbox</h2>
+          <p class="lead">Join the education list: backtest methodology, how the
+            system works under the hood, and a heads-up when live tracking begins.</p>
+          <form id="capture-form" action="#" method="post" novalidate>
+            <div class="field-row">
+              <input id="email" name="email" type="email" required
+                     placeholder="you@email.com" autocomplete="email">
+              <button class="btn btn-primary" type="submit">Follow along</button>
+            </div>
+            <p class="consent">By submitting, you agree to receive educational content
+              from Ganexxa by email. No spam; unsubscribe anytime.</p>
+            <p class="form-msg ok" id="msg-ok">Done! Check your inbox. 📬</p>
+            <p class="form-msg err" id="msg-err">That didn't work — check the email and try again.</p>
+            <p class="form-msg err" id="msg-offline">The list opens soon. Meanwhile,
+              join us on Telegram below. 👇</p>
+          </form>
+          <p class="tg-cta">Prefer Telegram? <a id="tg-link" href="{{TG_INVITE}}">Join the education channel</a>
+            <span class="tg-soon" id="tg-soon">(coming soon)</span></p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <section class="disclosure">
+    <div class="wrap">
+      <p><strong>Important:</strong> backtests and past performance do not predict
+        future results. All trading involves risk of loss. This is educational
+        content only; it is not an offer or investment advice.</p>
+      <p>Your data is never sold or shared. Email is used only for Ganexxa
+        educational content.</p>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="wrap">© Ganexxa — systematic trading education ·
+      <a href="#">Privacy Policy</a></div>
+  </footer>
+
+  <script src="../assets/app.js"></script>
+</body>
+</html>
