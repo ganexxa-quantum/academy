@@ -1,13 +1,27 @@
 /* ============================================================
    Ganexxa — first-step LP — shared behavior (pt/en/es)
-   [default — Bruno confirma se já há curva pública] a LP usa
-   {{LIVE_START_DATE}} no teaser; nenhum dado live é buscado.
-   [confirmado — Bruno 2026-08-08] host estático (GitHub Pages), sem backend: o form
-   posta pro mini-CDP em {{CDP_ENDPOINT}} (placeholder até o
-   deploy); pixel só ativa quando {{PIXEL_ID}} for substituído.
-   Nenhum segredo/ID real neste arquivo — placeholders {{...}}.
-   Config por página: atributos data-* no <body>.
-   CSP-safe: sem handlers inline, sem eval, sem CDN.
+   [confirmado — Bruno 2026-08-08] host estático (GitHub Pages), sem backend.
+
+   Captura first-party via mini-CDP (Cloud Run collector, tenant "ganexxa"):
+     - endpoint + write-key públicos de ingestão vêm dos data-* do <body>
+       (write-key É chave de ingestão pública, por design first-party — não é
+        segredo de infra; o gate real é write-key + CORS de origem no collector).
+     - o form monta um evento Segment-spec `identify` (schema-valid) e posta em
+       {endpoint} com header x-write-key. E-mail = opt-in deliberado do usuário
+       (consentimento do próprio ato de enviar), independe do banner.
+
+   Consent LGPD (banner):
+     - o consentimento do FORM cobre só o e-mail. O banner cobre o tracking
+       NÃO-essencial: o pixel X (page-view/remarketing) E o evento CDP `page`.
+     - initPixel() e o page-event SÓ rodam após "aceitar" explícito; escolha
+       persistida em localStorage; "recusar" => nenhum request de tracking.
+
+   Placeholders {{...}} preenchidos pelo Kai no deploy: {{PIXEL_ID}},
+   {{TG_INVITE}}, {{LIVE_START_DATE}}. O endpoint/write-key do CDP já estão
+   resolvidos (é o trabalho deste passo).
+
+   CSP-safe: sem handlers inline, sem eval, sem CDN (o loader do pixel só é
+   inserido pós-consentimento, e só toca static.ads-twitter.com — o host libera).
    ============================================================ */
 
 (function () {
@@ -17,13 +31,38 @@
   var cfg = {
     cell: body.getAttribute("data-cell") || "firststep-unknown",
     cdp: body.getAttribute("data-cdp") || "",
+    cdpKey: body.getAttribute("data-cdp-key") || "",
+    cdpTenant: body.getAttribute("data-cdp-tenant") || "",
     pixel: body.getAttribute("data-pixel") || "",
     tg: body.getAttribute("data-tg") || ""
   };
 
+  var CONSENT_KEY = "cdp_consent"; // "granted" | "denied"
+  var ANON_KEY = "cdp_aid";
+
   // Um valor ainda não substituído no deploy ("{{ALGO}}") não é config real.
   function isPlaceholder(v) {
     return !v || /\{\{.*\}\}/.test(v);
+  }
+
+  // ---------- storage helpers (degradam se localStorage bloqueado) ----------
+  function lsGet(k) {
+    try { return window.localStorage.getItem(k); } catch (e) { return null; }
+  }
+  function lsSet(k, v) {
+    try { window.localStorage.setItem(k, v); } catch (e) { /* no-op */ }
+  }
+
+  // ---------- anonymousId first-party (gerado 1×, reusado) ----------
+  function anonId() {
+    var id = lsGet(ANON_KEY);
+    if (!id) {
+      id = (window.crypto && window.crypto.randomUUID)
+        ? window.crypto.randomUUID()
+        : "aid-" + Math.random().toString(36).slice(2) + Date.now().toString(36);
+      lsSet(ANON_KEY, id);
+    }
+    return id;
   }
 
   // ---------- UTM capture (utm_source / utm_medium / utm_campaign) ----------
@@ -35,13 +74,81 @@
       utm_campaign: p.get("utm_campaign") || ""
     };
   }
-
   var utm = readUtm();
 
-  // ---------- pixel slot (só ativa com {{PIXEL_ID}} substituído) ----------
+  function consentState() {
+    var c = lsGet(CONSENT_KEY);
+    return c === "granted" || c === "denied" ? c : "unknown";
+  }
+
+  // ---------- CDP: monta evento Segment-spec e posta ----------
+  // Base comum: campos exigidos pelo schema do collector
+  // (type, anonymousId, tenant, timestamp) + context (campaign/page/consent).
+  function baseEvent(type) {
+    return {
+      type: type,
+      anonymousId: anonId(),
+      tenant: cfg.cdpTenant || "ganexxa",
+      timestamp: new Date().toISOString(),
+      context: {
+        campaign: {
+          source: utm.utm_source,
+          medium: utm.utm_medium,
+          name: utm.utm_campaign
+        },
+        page: {
+          path: window.location.pathname,
+          lang: document.documentElement.lang || ""
+        },
+        locale: document.documentElement.lang || "",
+        consent: consentState()
+      }
+    };
+  }
+
+  // Posta pro collector com o write-key no header. Retorna a Promise do fetch.
+  function postCdp(evt) {
+    var headers = { "Content-Type": "application/json" };
+    if (!isPlaceholder(cfg.cdpKey)) headers["x-write-key"] = cfg.cdpKey;
+    return fetch(cfg.cdp, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify(evt)
+    });
+  }
+
+  // identify = captura de e-mail (opt-in deliberado). Preserva todos os campos
+  // do payload antigo (source/utm/page/lang/ts) no envelope schema-valid.
+  function cdpIdentify(email) {
+    var evt = baseEvent("identify");
+    evt.traits = { email: email };
+    evt.properties = {
+      source: cfg.cell,
+      utm_source: utm.utm_source,
+      utm_medium: utm.utm_medium,
+      utm_campaign: utm.utm_campaign,
+      page: window.location.pathname,
+      lang: document.documentElement.lang || ""
+    };
+    return postCdp(evt);
+  }
+
+  // page = sinal de visita first-party. NÃO-essencial => só após consentimento.
+  function cdpPage() {
+    if (consentState() !== "granted") return; // gate LGPD
+    if (isPlaceholder(cfg.cdp) || isPlaceholder(cfg.cdpKey)) return;
+    var evt = baseEvent("page");
+    evt.event = "page_view";
+    evt.properties = { source: cfg.cell };
+    postCdp(evt).catch(function () { /* sinal secundário: falha silenciosa */ });
+  }
+
+  // ---------- pixel slot (só ativa com consentimento E {{PIXEL_ID}} real) ----------
   function initPixel() {
-    if (isPlaceholder(cfg.pixel)) return; // slot dormente: sem ID, sem request
-    // Loader padrão X/Twitter (uwt) — só roda pós-config, nunca no estado placeholder.
+    if (consentState() !== "granted") return; // gate LGPD — sem consent, zero request
+    if (isPlaceholder(cfg.pixel)) return;      // slot dormente: sem ID, sem request
+    if (window.twq) return;                    // idempotente
+    // Loader padrão X/Twitter (uwt) — só roda pós-config + pós-consentimento.
     !(function (e, t, n, s, u, a) {
       e.twq ||
         ((s = e.twq = function () {
@@ -59,12 +166,62 @@
     window.twq("event", "tw-" + cfg.pixel + "-lp_view", {
       conversion_id: cfg.cell,
       email_address: null,
-      // source da célula + UTMs viajam no evento (ISC-19/20)
       description:
         "source=" + cfg.cell +
         "|utm_source=" + utm.utm_source +
         "|utm_medium=" + utm.utm_medium +
         "|utm_campaign=" + utm.utm_campaign
+    });
+  }
+
+  function pixelLead() {
+    if (consentState() !== "granted") return;
+    if (isPlaceholder(cfg.pixel) || !window.twq) return;
+    window.twq("event", "tw-" + cfg.pixel + "-lead", {
+      conversion_id: cfg.cell,
+      description: "lead|source=" + cfg.cell
+    });
+  }
+
+  // Dispara todo o tracking não-essencial (chamado no accept e no load-se-já-aceito).
+  function enableTracking() {
+    initPixel();
+    cdpPage();
+  }
+
+  // ---------- consent banner (gateia pixel + page-event) ----------
+  function initConsent() {
+    var banner = document.getElementById("consent-banner");
+    var accept = document.getElementById("consent-accept");
+    var reject = document.getElementById("consent-reject");
+
+    var choice = consentState();
+    if (choice === "granted") {
+      enableTracking();      // revisita com consentimento: liga o tracking, sem re-perguntar
+      return;
+    }
+    if (choice === "denied") {
+      return;                // revisita com recusa: nada dispara, sem re-perguntar
+    }
+
+    // Sem escolha ainda: mostra o banner (se existir markup) e espera decisão.
+    if (!banner || !accept || !reject) return;
+    banner.hidden = false;
+    banner.setAttribute("aria-hidden", "false");
+    // move o foco pro banner (acessibilidade)
+    try { accept.focus(); } catch (e) { /* no-op */ }
+
+    accept.addEventListener("click", function () {
+      lsSet(CONSENT_KEY, "granted");
+      banner.hidden = true;
+      banner.setAttribute("aria-hidden", "true");
+      enableTracking();
+    });
+    reject.addEventListener("click", function () {
+      lsSet(CONSENT_KEY, "denied");
+      banner.hidden = true;
+      banner.setAttribute("aria-hidden", "true");
+      // recusa: nenhum request de tracking, agora nem em revisitas
     });
   }
 
@@ -103,37 +260,18 @@
         showMsg("err");
         return;
       }
-      // Failure-mode explícito: endpoint ainda placeholder → não quebra,
-      // orienta pro canal alternativo (ISC-34).
-      if (isPlaceholder(cfg.cdp)) {
+      // Failure-mode explícito: config ainda placeholder => não quebra,
+      // orienta pro canal alternativo (Telegram).
+      if (isPlaceholder(cfg.cdp) || isPlaceholder(cfg.cdpKey)) {
         showMsg("offline");
         return;
       }
-      var payload = {
-        email: email,
-        source: cfg.cell, // firststep-{pt|en|es}-x
-        utm_source: utm.utm_source,
-        utm_medium: utm.utm_medium,
-        utm_campaign: utm.utm_campaign,
-        page: window.location.pathname,
-        lang: document.documentElement.lang || "",
-        ts: new Date().toISOString()
-      };
-      fetch(cfg.cdp, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      })
+      cdpIdentify(email)
         .then(function (res) {
           if (!res.ok) throw new Error("cdp " + res.status);
           showMsg("ok");
           form.reset();
-          if (!isPlaceholder(cfg.pixel) && window.twq) {
-            window.twq("event", "tw-" + cfg.pixel + "-lead", {
-              conversion_id: cfg.cell,
-              description: "lead|source=" + cfg.cell
-            });
-          }
+          pixelLead(); // conversão no pixel só se houve consentimento
         })
         .catch(function () {
           showMsg("err");
@@ -141,8 +279,9 @@
     });
   }
 
-  // ---------- boot (nada é buscado no load além do pixel pós-config) ----------
+  // ---------- boot ----------
+  // Nada de tracking é buscado no load além do que o consentimento liberar.
   initTelegram();
   initForm();
-  initPixel();
+  initConsent(); // decide pixel/page-event conforme escolha guardada / banner
 })();

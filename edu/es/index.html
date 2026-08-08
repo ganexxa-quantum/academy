@@ -3,9 +3,9 @@
   Ganexxa — first-step LP — célula C-ES (source=firststep-es-x)
   [default 1 — Bruno confirma si ya existe curva pública]:
   sin curva live embebida; el teaser muestra backtests +
-  "seguimiento en vivo desde próximamente".
+  "seguimiento en vivo desde 10 de agosto de 2026".
   [confirmado — Bruno 2026-08-08]: host estático GitHub Pages, sin backend;
-  captura vía {{CDP_ENDPOINT}}; pixel slot {{PIXEL_ID}};
+  captura CDP ya conectada (collector Cloud Run, tenant ganexxa); pixel slot {{PIXEL_ID}};
   Telegram vía {{TG_INVITE}}. Placeholders — cero IDs reales.
   Compliance: education-framed; banlist entity.yaml respetada;
   sin oferta, sin intermediarios, sin promesas de retorno.
@@ -20,7 +20,9 @@
   <link rel="stylesheet" href="../assets/style.css">
 </head>
 <body data-cell="firststep-es-x"
-      data-cdp="{{CDP_ENDPOINT}}"
+      data-cdp="https://cdp-collector-2sdhkth7ma-uc.a.run.app/e"
+      data-cdp-key="wk_live_530fc5cd65d1de941914ba8268167246"
+      data-cdp-tenant="ganexxa"
       data-pixel="{{PIXEL_ID}}"
       data-tg="{{TG_INVITE}}">
 
@@ -105,7 +107,7 @@
               Quien sigue la curva entiende exactamente por qué.</li>
           </ul>
           <span class="live-flag"><span class="dot"></span>
-            Seguimiento en vivo desde <strong>&nbsp;próximamente</strong>
+            Seguimiento en vivo desde <strong>&nbsp;10 de agosto de 2026</strong>
           </span>
         </div>
       </div>
@@ -118,7 +120,7 @@
           <p class="lead">Únete a la lista educativa: metodología de los backtests,
             cómo funciona el sistema por dentro y el aviso de cuándo empieza el
             seguimiento en vivo.</p>
-          <form id="capture-form" action="#" method="post" novalidate>
+          <form id="capture-form" action="https://cdp-collector-2sdhkth7ma-uc.a.run.app/e" method="post" novalidate>
             <div class="field-row">
               <input id="email" name="email" type="email" required
                      placeholder="tu@email.com" autocomplete="email">
@@ -150,8 +152,24 @@
 
   <footer class="site-footer">
     <div class="wrap">© Ganexxa — educación en trading sistemático ·
-      <a href="#">Política de Privacidad</a></div>
+      <a href="/edu/privacy/">Política de Privacidad</a></div>
   </footer>
+
+  <!-- Consentimiento LGPD/GDPR: controla SOLO el tracking no esencial (pixel X + visita).
+       El opt-in del correo se consiente al enviar el formulario. -->
+  <div id="consent-banner" class="consent-banner" role="dialog" aria-modal="false"
+       aria-label="Preferencias de privacidad" aria-hidden="true" hidden>
+    <div class="consent-inner wrap">
+      <p class="consent-text">Usamos un pixel y una medición de visita para entender el
+        alcance de nuestro contenido educativo — y solo lo activamos con tu consentimiento.
+        Tu correo, si te suscribes, se trata aparte, según nuestra
+        <a href="/edu/privacy/">Política de Privacidad</a>.</p>
+      <div class="consent-actions">
+        <button type="button" id="consent-reject" class="btn btn-ghost">Rechazar</button>
+        <button type="button" id="consent-accept" class="btn btn-primary">Aceptar</button>
+      </div>
+    </div>
+  </div>
 
   <script src="../assets/app.js"></script>
 </body>
