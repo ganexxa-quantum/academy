@@ -1,20 +1,21 @@
 <!doctype html>
 <!-- ============================================================
   Ganexxa — first-step LP — célula C-ES (source=firststep-es-x)
-  [default 1 — Bruno confirma si ya existe curva pública]:
-  sin curva live embebida; el teaser muestra backtests +
-  "seguimiento en vivo desde 10 de agosto de 2026".
+  Sin curva live embebida; el teaser muestra los backtests + el ESTADO del
+  seguimiento en vivo, que sale de lp/site.config.json (pending vs live).
   [confirmado — Bruno 2026-08-08]: host estático GitHub Pages, sin backend;
-  captura CDP ya conectada (collector Cloud Run, tenant ganexxa); pixel slot {{PIXEL_ID}};
-  Telegram vía {{TG_INVITE}}. Placeholders — cero IDs reales.
+  captura CDP ya conectada (collector Cloud Run, tenant ganexxa).
+  Este archivo es FUENTE: los marcadores de doble llave los resuelve
+  `bun run render.ts`, que se niega a publicar si sobra alguno.
+  Nunca edites el dist a mano.
   Compliance: education-framed; banlist entity.yaml respetada;
   sin oferta, sin intermediarios, sin promesas de retorno.
 ============================================================ -->
 <html lang="es">
 <head>
-  <meta name="robots" content="noindex,nofollow">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
   <title>Tu dólar digital ya es un hábito — ahora, un sistema transparente | Ganexxa</title>
   <meta name="description" content="Educación en trading sistemático: cómo decide un algoritmo, por qué un backtest es una hipótesis y cómo seguir una curva en vivo con transparencia total.">
   <link rel="stylesheet" href="../assets/style.css">
@@ -23,8 +24,8 @@
       data-cdp="https://cdp-collector-2sdhkth7ma-uc.a.run.app/e"
       data-cdp-key="wk_live_530fc5cd65d1de941914ba8268167246"
       data-cdp-tenant="ganexxa"
-      data-pixel="{{PIXEL_ID}}"
-      data-tg="{{TG_INVITE}}">
+      data-pixel=""
+      data-tg="">
 
   <header class="site-header wrap">
     <a class="brand" href="#">Ganexxa
@@ -107,7 +108,7 @@
               Quien sigue la curva entiende exactamente por qué.</li>
           </ul>
           <span class="live-flag"><span class="dot"></span>
-            Seguimiento en vivo desde <strong>&nbsp;10 de agosto de 2026</strong>
+            Curva en vivo publicada en cuanto empiece el seguimiento
           </span>
         </div>
       </div>
@@ -133,7 +134,7 @@
             <p class="form-msg err" id="msg-offline">La lista abre pronto. Mientras tanto,
               súmate por Telegram aquí abajo. 👇</p>
           </form>
-          <p class="tg-cta">¿Prefieres Telegram? <a id="tg-link" href="{{TG_INVITE}}">Entrar al canal educativo</a>
+          <p class="tg-cta">¿Prefieres Telegram? <a id="tg-link" href="#">Entrar al canal educativo</a>
             <span class="tg-soon" id="tg-soon">(muy pronto)</span></p>
         </div>
       </div>

@@ -16,8 +16,9 @@
      - initPixel() e o page-event SÓ rodam após "aceitar" explícito; escolha
        persistida em localStorage; "recusar" => nenhum request de tracking.
 
-   Placeholders {{...}} preenchidos pelo Kai no deploy: {{PIXEL_ID}},
-   {{TG_INVITE}}, {{LIVE_START_DATE}}. O endpoint/write-key do CDP já estão
+   Marcadores resolvidos por lp/render.ts a partir de site.config.json:
+   PIXEL_ID, TG_INVITE, LIVE_TRACKING_LINE. Um valor vazio OU um marcador não
+   resolvido deixam o recurso dormente (ver isPlaceholder). O endpoint/write-key do CDP já estão
    resolvidos (é o trabalho deste passo).
 
    CSP-safe: sem handlers inline, sem eval, sem CDN (o loader do pixel só é
@@ -40,7 +41,7 @@
   var CONSENT_KEY = "cdp_consent"; // "granted" | "denied"
   var ANON_KEY = "cdp_aid";
 
-  // Um valor ainda não substituído no deploy ("{{ALGO}}") não é config real.
+  // Um marcador que sobrou do render (duplo-chave) não é config real.
   function isPlaceholder(v) {
     return !v || /\{\{.*\}\}/.test(v);
   }
@@ -143,7 +144,7 @@
     postCdp(evt).catch(function () { /* sinal secundário: falha silenciosa */ });
   }
 
-  // ---------- pixel slot (só ativa com consentimento E {{PIXEL_ID}} real) ----------
+  // ---------- pixel slot (só ativa com consentimento E PIXEL_ID real) ----------
   function initPixel() {
     if (consentState() !== "granted") return; // gate LGPD — sem consent, zero request
     if (isPlaceholder(cfg.pixel)) return;      // slot dormente: sem ID, sem request

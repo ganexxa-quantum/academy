@@ -1,20 +1,21 @@
 <!doctype html>
 <!-- ============================================================
   Ganexxa — first-step LP — cell C-EN (source=firststep-en-x)
-  [default 1 — Bruno confirms if a public live curve exists]:
-  no live curve embedded; teaser shows backtests + "live tracking
-  begins August 10, 2026".
+  No live curve embedded; the teaser shows the backtests + the STATE of
+  live tracking, which comes from lp/site.config.json (pending vs live).
   [confirmed — Bruno 2026-08-08]: static GitHub Pages host, no backend;
-  CDP capture wired (Cloud Run collector, tenant ganexxa); pixel slot {{PIXEL_ID}};
-  Telegram via {{TG_INVITE}}. Placeholders — zero real IDs.
+  CDP capture wired (Cloud Run collector, tenant ganexxa).
+  This file is SOURCE: the double-brace markers are resolved by
+  `bun run render.ts`, which refuses to publish if any marker survives.
+  Never hand-edit the dist.
   Compliance: education-framed; entity.yaml banlist respected;
   no offer, no intermediaries, no return promises.
 ============================================================ -->
 <html lang="en">
 <head>
-  <meta name="robots" content="noindex,nofollow">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
   <title>The honest backtest — systematic trading, explained | Ganexxa</title>
   <meta name="description" content="Education on systematic trading: how an algorithm decides, why a backtest is a hypothesis, and how to watch a live track record form with full transparency.">
   <link rel="stylesheet" href="../assets/style.css">
@@ -23,8 +24,8 @@
       data-cdp="https://cdp-collector-2sdhkth7ma-uc.a.run.app/e"
       data-cdp-key="wk_live_530fc5cd65d1de941914ba8268167246"
       data-cdp-tenant="ganexxa"
-      data-pixel="{{PIXEL_ID}}"
-      data-tg="{{TG_INVITE}}">
+      data-pixel=""
+      data-tg="">
 
   <header class="site-header wrap">
     <a class="brand" href="#">Ganexxa
@@ -107,7 +108,7 @@
               follow along, you'll understand exactly why.</li>
           </ul>
           <span class="live-flag"><span class="dot"></span>
-            Live tracking begins <strong>&nbsp;August 10, 2026</strong>
+            Live curve published as soon as tracking starts
           </span>
         </div>
       </div>
@@ -132,7 +133,7 @@
             <p class="form-msg err" id="msg-offline">The list opens soon. Meanwhile,
               join us on Telegram below. 👇</p>
           </form>
-          <p class="tg-cta">Prefer Telegram? <a id="tg-link" href="{{TG_INVITE}}">Join the education channel</a>
+          <p class="tg-cta">Prefer Telegram? <a id="tg-link" href="#">Join the education channel</a>
             <span class="tg-soon" id="tg-soon">(coming soon)</span></p>
         </div>
       </div>

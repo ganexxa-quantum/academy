@@ -1,7 +1,7 @@
 /* ============================================================
    Ganexxa — first-step LP (pt/en/es) — shared stylesheet
-   [default — Bruno confirma se já há curva pública] teaser usa
-   {{LIVE_START_DATE}}; sem curva live embutida.
+   Teaser sem curva live embutida; o estado do acompanhamento vem de
+   lp/site.config.json e é resolvido por render.ts.
    [confirmado — Bruno 2026-08-08] host estático GitHub Pages; sem backend.
    Autocontido: zero fontes/CDN externos (CSFP-safe).
    ============================================================ */
