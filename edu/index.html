@@ -7,6 +7,12 @@
   sempre funciona: (1) JS lê navigator.language e troca a URL sem
   entrar no histórico; (2) sem JS, o meta refresh leva pra pt em 2s;
   (3) sempre visível, os três links manuais. Default pt.
+
+  DÉBITO CONHECIDO — o caminho (1) preserva a querystring (UTM do anúncio
+  chegam inteiros em /edu/pt/, verificado em Chrome real); o caminho (2) NÃO:
+  um meta refresh tem URL fixa. Custa quase nada: sem JS o CDP também não
+  coleta evento nenhum, então esse visitante nunca entraria na conta do CPL.
+  O delay de 2s existe pra o JS sempre ganhar a corrida quando existe JS.
   Mora na FONTE (e é emitido pelo render em dist/) — se vivesse só
   no repo de publicação, o próximo `rsync --delete` o apagaria.
 ============================================================ -->
