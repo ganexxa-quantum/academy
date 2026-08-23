@@ -1,0 +1,46 @@
+<!doctype html>
+<!-- ============================================================
+  /edu/ sem idioma — despachante de idioma.
+  Existe porque /edu/ devolvia 404: um anúncio mal colado, um
+  compartilhamento ou alguém cortando a URL na barra caía num erro
+  em vez de numa landing page. Três camadas, da mais rápida à que
+  sempre funciona: (1) JS lê navigator.language e troca a URL sem
+  entrar no histórico; (2) sem JS, o meta refresh leva pra pt em 2s;
+  (3) sempre visível, os três links manuais. Default pt.
+  Mora na FONTE (e é emitido pelo render em dist/) — se vivesse só
+  no repo de publicação, o próximo `rsync --delete` o apagaria.
+============================================================ -->
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta http-equiv="refresh" content="2; url=pt/">
+  <title>Ganexxa — educação em trading sistemático</title>
+  <link rel="canonical" href="https://academy.ganexxa.com/edu/pt/">
+  <link rel="alternate" hreflang="pt" href="https://academy.ganexxa.com/edu/pt/">
+  <link rel="alternate" hreflang="en" href="https://academy.ganexxa.com/edu/en/">
+  <link rel="alternate" hreflang="es" href="https://academy.ganexxa.com/edu/es/">
+  <link rel="alternate" hreflang="x-default" href="https://academy.ganexxa.com/edu/pt/">
+  <link rel="stylesheet" href="assets/style.css">
+  <script>
+    (function () {
+      var tag = (navigator.language || (navigator.languages || [])[0] || "pt").toLowerCase();
+      var lang = tag.indexOf("es") === 0 ? "es" : tag.indexOf("en") === 0 ? "en" : "pt";
+      // replace() e não href: quem voltar não fica preso num laço de redirect.
+      location.replace(lang + "/" + location.search + location.hash);
+    })();
+  </script>
+</head>
+<body class="legal">
+  <main class="wrap legal-body">
+    <h1>Ganexxa</h1>
+    <p>Redirecionando… <em>Redirecting… · Redireccionando…</em></p>
+    <p>
+      <a href="pt/">Português</a> ·
+      <a href="en/">English</a> ·
+      <a href="es/">Español</a>
+    </p>
+  </main>
+</body>
+</html>
