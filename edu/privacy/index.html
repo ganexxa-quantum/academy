@@ -8,9 +8,15 @@
   descreve a prática real: nenhum prazo em dias foi inventado, nenhum
   dado societário, nenhum encarregado pessoa física. LGPD-appropriate;
   cobre: dados coletados,
-  finalidade, base legal (consentimento), retenção, direitos do
-  titular (art. 18), contato + cookies/localStorage, pixel X
-  consent-gated, e transferência internacional (Google Cloud/US).
+  finalidade, base legal, retenção, direitos do titular (art. 18),
+  contato + cookies/localStorage, pixel X consent-gated, e
+  transferência internacional (Google Cloud/US).
+  REVISADA 2026-08-24 (run 20260824-consent-flag): o banner virou FLAG.
+  A medição PRÓPRIA (page-view, contagem de chegada, captura de erro,
+  registro da escolha) passa a se apoiar em LEGÍTIMO INTERESSE e roda
+  sempre; o CONSENTIMENTO segue cobrindo o e-mail e o pixel do X — o
+  único ponto em que dado sai para terceiro. Texto redigido por Kai,
+  pendente de ratificação jurídica (ver FlagConsent.md).
   CSFP-safe: sem CDN, sem JS, stylesheet compartilhado.
 ============================================================ -->
 <html lang="pt-BR">
@@ -40,7 +46,7 @@
     <!-- ===================== PORTUGUÊS ===================== -->
     <article id="pt" lang="pt-BR" class="legal-lang">
       <h1>Política de Privacidade</h1>
-      <p class="legal-meta">Última atualização: <strong>23 de agosto de 2026</strong> ·
+      <p class="legal-meta">Última atualização: <strong>24 de agosto de 2026</strong> ·
         Responsável pelo tratamento: <strong>Ganexxa</strong>.</p>
 
       <p>Esta página explica como tratamos dados quando você acessa nosso conteúdo
@@ -53,13 +59,20 @@
         <li><strong>E-mail</strong> — apenas se você o enviar pelo formulário de
           inscrição (ato voluntário de opt-in).</li>
         <li><strong>Evento de visita (page-view)</strong> — registro de que uma página
-          foi acessada, com origem da campanha (parâmetros UTM). Coletado
-          <strong>somente com o seu consentimento</strong> no banner.</li>
-        <li><strong>Identificador anônimo</strong> — um código aleatório guardado no seu
-          navegador (localStorage) para não contar a mesma visita duas vezes. Não
-          identifica você pessoalmente.</li>
+          foi acessada, com origem da campanha (parâmetros UTM). Registrado
+          <strong>em toda visita</strong>, com base no <strong>legítimo interesse</strong>
+          (item 4). O registro carrega a sua escolha no banner — aceita, recusada ou ainda
+          não respondida — para que a gente saiba qual regra aplicar a ele depois.</li>
+        <li><strong>Identificador anônimo</strong> — um código aleatório para não contar a
+          mesma visita duas vezes. Ele <strong>só é guardado no seu navegador</strong>
+          (localStorage) se você <strong>aceitar</strong> no banner. Antes de você responder —
+          e também se você recusar — ele é gerado a cada carregamento de página e
+          <strong>não é gravado no seu dispositivo</strong>: duas visitas suas não podem ser
+          ligadas uma à outra. Não identifica você pessoalmente.</li>
         <li><strong>Sua escolha de consentimento</strong> — guardada no navegador
-          (localStorage) para respeitarmos sua decisão em visitas futuras.</li>
+          (localStorage) para respeitarmos sua decisão em visitas futuras, e registrada
+          também no nosso servidor no momento em que você clica, para sabermos qual
+          tratamento aplicar ao seu registro depois.</li>
         <li><strong>Dados técnicos</strong> — endereço IP e informações do navegador,
           processados no momento da coleta para segurança e atribuição de campanha.</li>
         <li><strong>Contagem de chegada</strong> — um registro de que esta página foi
@@ -81,7 +94,9 @@
         identificador anônimo e para a sua escolha de consentimento. Se você aceitar no
         banner, ativamos o <strong>pixel do X (Twitter)</strong> para medir o alcance do
         conteúdo — o que envia um sinal de visita ao X. <strong>Se você recusar, o pixel
-        nunca é carregado e nenhum dado de visita é enviado.</strong> O opt-in de e-mail é
+        nunca é carregado e nada é enviado ao X.</strong> A nossa própria medição de visita
+        continua: ela é first-party, fica só com a gente, não vai para nenhum terceiro e leva
+        a marca da sua recusa (item 4). O opt-in de e-mail é
         independente do banner: ele cobre só o envio de conteúdo por e-mail.</p>
 
       <h2>3. Finalidade</h2>
@@ -90,12 +105,22 @@
         usado para decisões automatizadas com efeito jurídico sobre você.</p>
 
       <h2>4. Base legal</h2>
-      <p>O tratamento se apoia no seu <strong>consentimento</strong> (LGPD, art. 7º, I e
-        art. 8º) — dado ao enviar o formulário (e-mail) e ao aceitar o banner (medição de
-        visita/pixel). Você pode retirar o consentimento a qualquer momento.</p>
-      <p>Há uma exceção, e ela é declarada aqui em vez de escondida: a
+      <p>Duas bases legais, cada uma no seu lugar:</p>
+      <p>O <strong>consentimento</strong> (LGPD, art. 7º, I e art. 8º) cobre o
+        <strong>e-mail</strong> — dado ao enviar o formulário — e o <strong>pixel do X</strong>,
+        que só é ativado se você aceitar no banner, porque ele transfere um sinal seu a um
+        terceiro. Você pode retirar o consentimento a qualquer momento.</p>
+      <p>O <strong>legítimo interesse</strong> (LGPD, art. 7º, IX e art. 10) cobre a nossa
+        medição própria: o <strong>evento de visita</strong>, a <strong>contagem de
+        chegada</strong>, a <strong>captura de erro técnico</strong> e o <strong>registro da
+        sua escolha</strong> no banner. Tudo isso é first-party — fica com a gente, não é
+        cruzado com rastreadores de terceiros e não forma perfil. É a hipótese que a ANPD
+        nomeia para medição de audiência no Guia Orientativo de Cookies. Você pode se opor a
+        esse tratamento pelo contato do item 8 (LGPD, art. 18, §2º).</p>
+      <p>O detalhe que costuma ficar escondido, declarado aqui: essa medição própria roda
+        <strong>antes e independentemente do banner</strong> — a
         <strong>contagem de chegada</strong> e a <strong>captura de erro técnico</strong>
-        descritas no item 1 rodam <strong>antes do banner</strong>, apoiadas no
+        descritas no item 1 inclusive, apoiadas no
         <strong>legítimo interesse</strong> (LGPD, art. 7º, IX e art. 10) para medição de
         audiência e diagnóstico técnico — a hipótese que a ANPD nomeia para esta finalidade
         no Guia Orientativo de Cookies. Elas <strong>não gravam nada no seu dispositivo</strong>
@@ -136,7 +161,7 @@
     <!-- ===================== ENGLISH ===================== -->
     <article id="en" lang="en" class="legal-lang">
       <h1>Privacy Policy</h1>
-      <p class="legal-meta">Last updated: <strong>August 23, 2026</strong> ·
+      <p class="legal-meta">Last updated: <strong>August 24, 2026</strong> ·
         Data controller: <strong>Ganexxa</strong>.</p>
 
       <p>This page explains how we handle data when you access our educational content on
@@ -148,13 +173,18 @@
         <li><strong>Email</strong> — only if you submit it through the sign-up form (a
           voluntary opt-in).</li>
         <li><strong>Page-view event</strong> — a record that a page was viewed, with the
-          campaign source (UTM parameters). Collected <strong>only with your consent</strong>
-          via the banner.</li>
-        <li><strong>Anonymous identifier</strong> — a random code stored in your browser
-          (localStorage) so we don't count the same visit twice. It does not identify you
-          personally.</li>
+          campaign source (UTM parameters). Recorded <strong>on every visit</strong>, on the
+          basis of <strong>legitimate interest</strong> (section 4). The record carries your
+          banner choice — accepted, declined, or not yet answered — so we know which rule to
+          apply to it later.</li>
+        <li><strong>Anonymous identifier</strong> — a random code so we don't count the same
+          visit twice. It is <strong>only stored in your browser</strong> (localStorage) if you
+          <strong>accept</strong> in the banner. Before you answer — and if you decline — it is
+          generated per page load and <strong>never written to your device</strong>: two of your
+          visits cannot be linked to each other. It does not identify you personally.</li>
         <li><strong>Your consent choice</strong> — stored in your browser (localStorage) so
-          we honour your decision on future visits.</li>
+          we honour your decision on future visits, and also recorded on our server the moment
+          you click, so we know which treatment to apply to your record later.</li>
         <li><strong>Technical data</strong> — IP address and browser information, processed
           at collection time for security and campaign attribution.</li>
         <li><strong>Arrival count</strong> — a record that this page was rendered, with the
@@ -173,8 +203,9 @@
       <p>We use <strong>localStorage</strong> (not a tracking cookie) for the anonymous
         identifier and your consent choice. If you accept in the banner, we activate the
         <strong>X (Twitter) pixel</strong> to measure content reach — which sends a visit
-        signal to X. <strong>If you decline, the pixel is never loaded and no visit data is
-        sent.</strong> The email opt-in is independent of the banner: it covers only sending
+        signal to X. <strong>If you decline, the pixel is never loaded and nothing is sent to
+        X.</strong> Our own page-view measurement continues: it is first-party, stays with us,
+        goes to no third party, and carries the mark of your refusal (section 4). The email opt-in is independent of the banner: it covers only sending
         content by email.</p>
 
       <h2>3. Purpose</h2>
@@ -183,13 +214,22 @@
         decisions with legal effect on you.</p>
 
       <h2>4. Legal basis</h2>
-      <p>Processing relies on your <strong>consent</strong> (LGPD art. 7, I and art. 8;
-        GDPR art. 6(1)(a) for EU visitors) — given by submitting the form (email) and by
-        accepting the banner (visit measurement/pixel). You may withdraw consent at any
+      <p>Two legal bases, each in its place:</p>
+      <p><strong>Consent</strong> (LGPD art. 7, I and art. 8; GDPR art. 6(1)(a) for EU
+        visitors) covers your <strong>email</strong> — given by submitting the form — and the
+        <strong>X pixel</strong>, which is only activated if you accept in the banner, because
+        it transfers a signal about you to a third party. You may withdraw consent at any
         time.</p>
-      <p>There is one exception, declared here rather than hidden: the
+      <p><strong>Legitimate interest</strong> (LGPD art. 7, IX and art. 10; GDPR art. 6(1)(f))
+        covers our own measurement: the <strong>page-view event</strong>, the <strong>arrival
+        count</strong>, the <strong>technical error capture</strong>, and the <strong>record of
+        your choice</strong> in the banner. All of it is first-party — it stays with us, is not
+        cross-referenced with third-party trackers, and builds no profile. You may object to
+        this processing via the contact in section 8.</p>
+      <p>The part usually left hidden, declared here: this own measurement runs
+        <strong>before and independently of the banner</strong> — including the
         <strong>arrival count</strong> and the <strong>technical error capture</strong>
-        described in section 1 run <strong>before the banner</strong>, on the basis of
+        described in section 1, on the basis of
         <strong>legitimate interest</strong> (LGPD art. 7, IX and art. 10; GDPR art. 6(1)(f))
         for audience measurement and technical diagnostics. They
         <strong>store nothing on your device</strong> and <strong>create no identifier</strong>:
@@ -228,7 +268,7 @@
     <!-- ===================== ESPAÑOL ===================== -->
     <article id="es" lang="es" class="legal-lang">
       <h1>Política de Privacidad</h1>
-      <p class="legal-meta">Última actualización: <strong>23 de agosto de 2026</strong> ·
+      <p class="legal-meta">Última actualización: <strong>24 de agosto de 2026</strong> ·
         Responsable del tratamiento: <strong>Ganexxa</strong>.</p>
 
       <p>Esta página explica cómo tratamos los datos cuando accedes a nuestro contenido
@@ -240,13 +280,19 @@
         <li><strong>Correo electrónico</strong> — solo si lo envías por el formulario de
           suscripción (un opt-in voluntario).</li>
         <li><strong>Evento de visita (page-view)</strong> — un registro de que se vio una
-          página, con el origen de la campaña (parámetros UTM). Se recopila
-          <strong>solo con tu consentimiento</strong> en el banner.</li>
-        <li><strong>Identificador anónimo</strong> — un código aleatorio guardado en tu
-          navegador (localStorage) para no contar la misma visita dos veces. No te identifica
-          personalmente.</li>
+          página, con el origen de la campaña (parámetros UTM). Se registra
+          <strong>en cada visita</strong>, con base en el <strong>interés legítimo</strong>
+          (punto 4). El registro lleva tu elección en el banner — aceptada, rechazada o aún
+          sin responder — para saber qué regla aplicarle después.</li>
+        <li><strong>Identificador anónimo</strong> — un código aleatorio para no contar la misma
+          visita dos veces. <strong>Solo se guarda en tu navegador</strong> (localStorage) si
+          <strong>aceptas</strong> en el banner. Antes de que respondas — y también si rechazas —
+          se genera en cada carga de página y <strong>no se escribe en tu dispositivo</strong>:
+          dos visitas tuyas no pueden vincularse entre sí. No te identifica personalmente.</li>
         <li><strong>Tu elección de consentimiento</strong> — guardada en tu navegador
-          (localStorage) para respetar tu decisión en visitas futuras.</li>
+          (localStorage) para respetar tu decisión en visitas futuras, y registrada también en
+          nuestro servidor en el momento en que haces clic, para saber qué tratamiento aplicar
+          a tu registro después.</li>
         <li><strong>Datos técnicos</strong> — dirección IP e información del navegador,
           procesados en el momento de la recolección para seguridad y atribución de campaña.</li>
         <li><strong>Conteo de llegada</strong> — un registro de que esta página se renderizó,
@@ -267,7 +313,8 @@
         anónimo y tu elección de consentimiento. Si aceptas en el banner, activamos el
         <strong>pixel de X (Twitter)</strong> para medir el alcance del contenido — lo que
         envía una señal de visita a X. <strong>Si rechazas, el pixel nunca se carga y no se
-        envía ningún dato de visita.</strong> El opt-in del correo es independiente del banner:
+        envía nada a X.</strong> Nuestra propia medición de visita continúa: es first-party, se
+        queda con nosotros, no va a ningún tercero y lleva la marca de tu rechazo (punto 4). El opt-in del correo es independiente del banner:
         cubre solo el envío de contenido por correo.</p>
 
       <h2>3. Finalidad</h2>
@@ -276,13 +323,22 @@
         decisiones automatizadas con efecto jurídico sobre ti.</p>
 
       <h2>4. Base legal</h2>
-      <p>El tratamiento se basa en tu <strong>consentimiento</strong> (LGPD art. 7, I y art. 8;
-        GDPR art. 6(1)(a) para visitantes de la UE) — otorgado al enviar el formulario (correo)
-        y al aceptar el banner (medición de visita/pixel). Puedes retirar el consentimiento en
-        cualquier momento.</p>
-      <p>Hay una excepción, declarada aquí en vez de escondida: el
+      <p>Dos bases legales, cada una en su lugar:</p>
+      <p>El <strong>consentimiento</strong> (LGPD art. 7, I y art. 8; GDPR art. 6(1)(a) para
+        visitantes de la UE) cubre tu <strong>correo</strong> — otorgado al enviar el
+        formulario — y el <strong>pixel de X</strong>, que solo se activa si aceptas en el
+        banner, porque transfiere una señal tuya a un tercero. Puedes retirar el consentimiento
+        en cualquier momento.</p>
+      <p>El <strong>interés legítimo</strong> (LGPD art. 7, IX y art. 10; GDPR art. 6(1)(f))
+        cubre nuestra medición propia: el <strong>evento de visita</strong>, el <strong>conteo
+        de llegada</strong>, la <strong>captura de error técnico</strong> y el <strong>registro
+        de tu elección</strong> en el banner. Todo es first-party — se queda con nosotros, no se
+        cruza con rastreadores de terceros y no elabora perfiles. Puedes oponerte a este
+        tratamiento por el contacto del punto 8.</p>
+      <p>La parte que suele quedar escondida, declarada aquí: esa medición propia se ejecuta
+        <strong>antes del banner y con independencia de él</strong> — incluidos el
         <strong>conteo de llegada</strong> y la <strong>captura de error técnico</strong>
-        descritos en el punto 1 se ejecutan <strong>antes del banner</strong>, amparados en el
+        descritos en el punto 1, amparados en el
         <strong>interés legítimo</strong> (LGPD art. 7, IX y art. 10; GDPR art. 6(1)(f)) para
         medición de audiencia y diagnóstico técnico. <strong>No guardan nada en tu
         dispositivo</strong> y <strong>no crean ningún identificador</strong>: dos visitas no

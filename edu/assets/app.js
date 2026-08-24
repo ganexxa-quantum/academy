@@ -10,11 +10,20 @@
        {endpoint} com header x-write-key. E-mail = opt-in deliberado do usuário
        (consentimento do próprio ato de enviar), independe do banner.
 
-   Consent LGPD (banner):
-     - o consentimento do FORM cobre só o e-mail. O banner cobre o tracking
-       NÃO-essencial: o pixel X (page-view/remarketing) E o evento CDP `page`.
-     - initPixel() e o page-event SÓ rodam após "aceitar" explícito; escolha
-       persistida em localStorage; "recusar" => nenhum request de tracking.
+   Consent LGPD (banner) — v3, 2026-08-24 (run 20260824-consent-flag):
+     - O banner deixou de ser PORTÃO da nossa medição e virou FLAG. O `page_view`
+       do NOSSO CDP dispara sempre; todo evento carrega `context.consent` com
+       um de três valores: "granted" | "denied" | "unknown" (ainda não decidiu).
+       Base legal da medição própria: legítimo interesse (LGPD art. 7º, IX +
+       art. 10) — o mesmo regime do contador de chegada. A regra jurídica que
+       trata cada valor virá DEPOIS, aplicada em cima da flag.
+     - O PIXEL DO X CONTINUA GATEADO. Disparar pixel sem consentimento é
+       transferência a terceiro (o X passa a usar o dado para fins próprios) —
+       pergunta diferente de "eu guardo e marco", e ela é do jurídico.
+     - Nada é gravado no dispositivo de quem não aceitou: o anonymous_id só é
+       PERSISTIDO após o "aceitar" (antes disso ele existe só em memória, por
+       carregamento de página — ver anonId/persistAnonId). O e-mail do form
+       segue independente do banner: o próprio envio é o opt-in.
 
    Marcadores resolvidos por lp/render.ts a partir de site.config.json:
    PIXEL_ID, TG_INVITE, LIVE_TRACKING_LINE. Um valor vazio OU um marcador não
@@ -213,15 +222,34 @@
   }
 
   // ---------- anonymousId first-party (gerado 1×, reusado) ----------
+  // v3: memoizado no escopo do IIFE e NÃO gravado no dispositivo antes do
+  // "aceitar". Duas razões, nesta ordem:
+  //   1. Com o page_view desgateado, gravar o id no load faria a LP escrever no
+  //      aparelho de quem ainda não decidiu (e de quem recusou) — coisa que a
+  //      política de privacidade afirma hoje que NÃO acontece antes do banner.
+  //      Sem persistir, a promessa continua verdadeira e o evento continua
+  //      existindo com a flag: duas visitas de um recusante não se ligam.
+  //   2. A memoização conserta um bug silencioso anterior: com localStorage
+  //      bloqueado (Caminho C), cada chamada gerava um id NOVO — page_view e
+  //      lead da MESMA visita chegavam como duas pessoas.
+  var aidMemo = null;
   function anonId() {
+    if (aidMemo) return aidMemo;
     var id = lsGet(ANON_KEY);
     if (!id) {
       id = (window.crypto && window.crypto.randomUUID)
         ? window.crypto.randomUUID()
         : "aid-" + Math.random().toString(36).slice(2) + Date.now().toString(36);
-      lsSet(ANON_KEY, id);
+      // só grava se a pessoa JÁ aceitou numa visita anterior
+      if (lsGet(CONSENT_KEY) === "granted") lsSet(ANON_KEY, id);
     }
-    return id;
+    aidMemo = id;
+    return aidMemo;
+  }
+
+  // Grava o id no dispositivo. Chamado UMA vez: no clique em "aceitar".
+  function persistAnonId() {
+    lsSet(ANON_KEY, anonId());
   }
 
   function consentState() {
@@ -300,9 +328,12 @@
     return postCdp(evt);
   }
 
-  // page = sinal de visita first-party. NÃO-essencial => só após consentimento.
+  // page = sinal de visita first-party. v3: SEM GATE — dispara sempre, e o
+  // estado do consentimento viaja no envelope (`context.consent`, via
+  // baseEvent → consentState()). Era este `return` que fazia o funil inteiro
+  // ser invisível: ~93% de quem chega não responde o banner, então o registro
+  // media quem aceitava, não quem chegava.
   function cdpPage() {
-    if (consentState() !== "granted") return; // gate LGPD
     if (isPlaceholder(cfg.cdp) || isPlaceholder(cfg.cdpKey)) return;
     var evt = baseEvent("page");
     evt.event = "page_view";
@@ -350,13 +381,19 @@
     });
   }
 
-  // Dispara todo o tracking não-essencial (chamado no accept e no load-se-já-aceito).
-  function enableTracking() {
-    initPixel();
-    cdpPage();
+  // O ATO de responder o banner vira registro próprio, com o valor NOVO na
+  // flag. Sem ele, o page_view do primeiro load ficaria `unknown` para sempre e
+  // a resposta da pessoa não existiria em lugar nenhum — que é exatamente o que
+  // o pedido ("saber se a pessoa aceitou ou não") manda existir.
+  function cdpConsentChoice() {
+    if (isPlaceholder(cfg.cdp) || isPlaceholder(cfg.cdpKey)) return;
+    var evt = baseEvent("track");
+    evt.event = "consent_choice";
+    evt.properties = { source: cfg.cell, choice: consentState() };
+    postCdp(evt).catch(function () { /* sinal secundário: falha silenciosa */ });
   }
 
-  // ---------- consent banner (gateia pixel + page-event) ----------
+  // ---------- consent banner (gateia SÓ o pixel; registra a escolha) ------
   function initConsent() {
     var banner = document.getElementById("consent-banner");
     var accept = document.getElementById("consent-accept");
@@ -364,11 +401,11 @@
 
     var choice = consentState();
     if (choice === "granted") {
-      enableTracking();      // revisita com consentimento: liga o tracking, sem re-perguntar
+      initPixel();           // revisita com consentimento: liga o pixel, sem re-perguntar
       return;
     }
     if (choice === "denied") {
-      return;                // revisita com recusa: nada dispara, sem re-perguntar
+      return;                // revisita com recusa: nenhum request ao X, sem re-perguntar
     }
 
     // Sem escolha ainda: mostra o banner (se existir markup) e espera decisão.
@@ -380,15 +417,19 @@
 
     accept.addEventListener("click", function () {
       lsSet(CONSENT_KEY, "granted");
+      persistAnonId();       // a partir daqui o id pode viver no dispositivo
       banner.hidden = true;
       banner.setAttribute("aria-hidden", "true");
-      enableTracking();
+      initPixel();           // o pixel do X — e SÓ ele — depende deste clique
+      cdpConsentChoice();    // registra "granted" na flag
     });
     reject.addEventListener("click", function () {
       lsSet(CONSENT_KEY, "denied");
       banner.hidden = true;
       banner.setAttribute("aria-hidden", "true");
-      // recusa: nenhum request de tracking, agora nem em revisitas
+      // recusa: zero request ao X, agora e em revisitas. O registro da RECUSA
+      // é nosso, first-party, e é o que a regra jurídica futura vai ler.
+      cdpConsentChoice();
     });
   }
 
@@ -482,11 +523,13 @@
   }
 
   // ---------- boot ----------
-  // Nada de tracking é buscado no load além do que o consentimento liberar.
+  // v3: o page_view do NOSSO CDP roda sempre (com a flag); o consentimento
+  // decide só o pixel do X.
   // v2: cada peça no seu próprio try/catch. Antes, um throw em qualquer uma
   // levava as outras duas junto — foi assim que o Caminho B apagou o form E o
   // banner E o contador de uma vez só.
   try { initTelegram(); } catch (e) { /* no-op */ }
   try { initForm(); } catch (e) { /* no-op */ }
-  try { initConsent(); } catch (e) { /* no-op */ } // decide pixel/page-event conforme escolha guardada / banner
+  try { cdpPage(); } catch (e) { /* no-op */ }     // visita registrada SEMPRE, com a flag
+  try { initConsent(); } catch (e) { /* no-op */ } // decide o pixel do X conforme escolha guardada / banner
 })();
