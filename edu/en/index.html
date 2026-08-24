@@ -16,6 +16,56 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
+  <noscript><meta name="referrer" content="unsafe-url"></noscript>
+  <!-- Client hints (instrumentação v2, 2026-08-24). O UA do Chrome MENTE sobre
+       SO e modelo no Android ("Android 10; K"); os client hints, não. Os três de
+       baixa entropia chegam sozinhos; os de alta entropia (model, platform-version,
+       full-version-list) só chegam se o servidor pedir via Accept-CH E a página
+       delegar permissão para a origem do collector — o hit dele é subrecurso
+       cross-origin. GitHub Pages não deixa setar header de resposta, então a
+       delegação vai por <meta>, que é o mecanismo suportado no Chromium.
+       Firefox e Safari não implementam client hints: lá estes campos vêm VAZIOS,
+       e vazio significa "este browser não manda", não "desconhecido". -->
+  <meta http-equiv="accept-ch" content="sec-ch-ua, sec-ch-ua-mobile, sec-ch-ua-platform, sec-ch-ua-arch, sec-ch-ua-bitness, sec-ch-ua-full-version-list, sec-ch-ua-model, sec-ch-ua-platform-version, sec-ch-ua-form-factors">
+  <meta http-equiv="delegate-ch" content="sec-ch-ua https://cdp-collector-2sdhkth7ma-uc.a.run.app; sec-ch-ua-mobile https://cdp-collector-2sdhkth7ma-uc.a.run.app; sec-ch-ua-platform https://cdp-collector-2sdhkth7ma-uc.a.run.app; sec-ch-ua-arch https://cdp-collector-2sdhkth7ma-uc.a.run.app; sec-ch-ua-bitness https://cdp-collector-2sdhkth7ma-uc.a.run.app; sec-ch-ua-full-version-list https://cdp-collector-2sdhkth7ma-uc.a.run.app; sec-ch-ua-model https://cdp-collector-2sdhkth7ma-uc.a.run.app; sec-ch-ua-platform-version https://cdp-collector-2sdhkth7ma-uc.a.run.app; sec-ch-ua-form-factors https://cdp-collector-2sdhkth7ma-uc.a.run.app">
+  <!-- Captura de erro — inline e o PRIMEIRO script da página, de propósito.
+       Um reporter carregado depois não vê erro de parse dos scripts seguintes,
+       e um reporter que usa fetch não consegue reportar a falta de fetch: por
+       isso a escada sendBeacon → XHR → new Image(), cujo último degrau funciona
+       em qualquer engine que exista. Sem gate de consentimento (diagnóstico
+       técnico, legítimo interesse), 100% de amostragem, teto de 5 erros por
+       pageview pra não virar flood. text/plain evita preflight CORS. -->
+  <script>
+    (function () {
+      var U = "https://cdp-collector-2sdhkth7ma-uc.a.run.app/err", T = "ganexxa", n = 0;
+      function pack(o, tr) {
+        o.tr = tr; o.t = T;
+        try { o.p = location.pathname; o.lang = document.documentElement.lang || ""; } catch (e) {}
+        try { return JSON.stringify(o); } catch (e) { return '{"m":"stringify falhou","k":"reporter"}'; }
+      }
+      function send(o) {
+        if (n++ >= 5) return;
+        try { if (navigator.sendBeacon && navigator.sendBeacon(U, pack(o, "beacon"))) return; } catch (e) {}
+        try {
+          var x = new XMLHttpRequest();
+          x.open("POST", U, true);
+          x.setRequestHeader("Content-Type", "text/plain;charset=UTF-8");
+          x.send(pack(o, "xhr"));
+          return;
+        } catch (e) {}
+        try { new Image().src = U + "?d=" + encodeURIComponent(pack(o, "image").slice(0, 1200)); } catch (e) {}
+      }
+      window.onerror = function (m, f, l, c, err) {
+        send({ m: String(m), f: String(f || ""), l: l || 0, co: c || 0, st: err && err.stack ? String(err.stack) : "", k: "error" });
+      };
+      if (window.addEventListener) {
+        window.addEventListener("unhandledrejection", function (ev) {
+          var r = ev && ev.reason;
+          send({ m: r && r.message ? String(r.message) : String(r), st: r && r.stack ? String(r.stack) : "", k: "unhandledrejection" });
+        });
+      }
+    })();
+  </script>
   <title>The honest backtest — systematic trading, explained | Ganexxa</title>
   <meta name="description" content="Education on systematic trading: how an algorithm decides, why a backtest is a hypothesis, and how to watch a live track record form with full transparency.">
   <link rel="stylesheet" href="../assets/style.css">
@@ -26,6 +76,19 @@
       data-cdp-tenant="ganexxa"
       data-pixel="remjd"
       data-tg="">
+
+  <!-- CAMADA 1 do contador de chegada — zero JavaScript, antes de qualquer <script>.
+       Existe porque o contador anterior (beacon no boot do app.js) morria junto
+       com o app.js: era cego exatamente para a população que existia pra medir.
+       Este <img> conta TODA renderização — JS desligado, engine sem fetch,
+       localStorage bloqueado, throw no topo, e qualquer erro futuro que a gente
+       ainda nem introduziu. referrerpolicy="unsafe-url" é deliberado: sem ele a
+       política padrão cross-origin manda só a origem, sem query, e o contador
+       contaria a chegada PERDENDO a campanha — a UTM só existe no Referer quando
+       não há JS pra ler a querystring. Alargamento do nosso domínio para o nosso
+       próprio collector; declarado no LIA. -->
+  <img src="https://cdp-collector-2sdhkth7ma-uc.a.run.app/c?p=/edu/en/&amp;l=en&amp;s=html&amp;t=ganexxa" alt="" width="1" height="1" referrerpolicy="unsafe-url"
+       style="position:absolute;left:-9999px;top:0" aria-hidden="true">
 
   <header class="site-header wrap">
     <a class="brand" href="#">Ganexxa
@@ -121,6 +184,21 @@
           <p class="lead">Join the education list: backtest methodology, how the
             system works under the hood, and a heads-up when live tracking begins.</p>
           <form id="capture-form" action="https://cdp-collector-2sdhkth7ma-uc.a.run.app/e" method="post" novalidate>
+            <!-- D7: o submit NATIVO virou caminho real (preventDefault condicional
+                 no app.js), então o action tem que FUNCIONAR sem JavaScript — o
+                 collector aceita urlencoded e redireciona pra página de obrigado.
+                 Sem JS não há como preencher UTM: eles vêm do Referer. -->
+            <input type="hidden" name="lang" value="en">
+            <input type="hidden" name="cell" value="firststep-en-x">
+            <!-- t = tenant (não é segredo, ao contrário da write-key). O Origin do POST
+                 nativo já resolve o tenant em produção; este campo é o cinto de
+                 segurança para o caso de o Origin/Referer não chegar. -->
+            <input type="hidden" name="t" value="ganexxa">
+            <!-- Preenchidos pelo app.js no load. Sem JavaScript ficam vazios e a
+                 campanha vem do Referer (ver o <noscript> no <head>). -->
+            <input type="hidden" name="utm_source" id="utm_source" value="">
+            <input type="hidden" name="utm_medium" id="utm_medium" value="">
+            <input type="hidden" name="utm_campaign" id="utm_campaign" value="">
             <div class="field-row">
               <input id="email" name="email" type="email" required
                      placeholder="you@email.com" autocomplete="email">

@@ -1,0 +1,44 @@
+<!doctype html>
+<!-- ============================================================
+  Página de obrigado — o destino do submit NATIVO do formulário (D7).
+  Criada em 2026-08-24 junto com a instrumentação v2.
+
+  QUEM VÊ ESTA PÁGINA: só quem NÃO tem JavaScript funcionando. Com JS o
+  app.js intercepta o submit, posta no collector e mostra a mensagem
+  inline sem sair da página. Sem JS (ou sem `fetch` E sem XHR, ou sem
+  `Promise`) o `preventDefault()` não roda, o submit nativo segue para o
+  collector, ele grava o lead e redireciona 303 para cá.
+
+  Antes disso o mesmo submit batia num endpoint que só fala JSON e o
+  usuário recebia `{"error":"invalid json"}` na cara — o pior modo de
+  falha possível, logo depois de ele ter digitado o e-mail.
+
+  FONTE: os marcadores duplo-chave são resolvidos por `bun run render.ts`,
+  que emite este arquivo em dist/{pt,en,es}/obrigado/index.html.
+  Nunca edite o dist à mão.
+============================================================ -->
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Recibido — Ganexxa</title>
+  <link rel="stylesheet" href="../../assets/style.css">
+</head>
+<body class="legal">
+  <!-- SEM contador aqui, de propósito: um <img> nesta página entraria no mesmo
+       balde de arrivals(s=html) e inflaria o DENOMINADOR da régua com páginas
+       que não são chegadas. O lead sem JavaScript já tem prova própria e mais
+       forte — a linha identify com properties.transport = "form-native". -->
+
+  <main class="wrap legal-body">
+    <h1>Recibí tu correo.</h1>
+    <p>Te aviso por correo cuando empiece la curva en vivo, junto con la metodología de los backtests. Sin spam; date de baja cuando quieras.</p>
+    <p><a href="../">Volver a la página</a></p>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">© Ganexxa · <a href="/edu/privacy/">Política de Privacidade</a></div>
+  </footer>
+</body>
+</html>
