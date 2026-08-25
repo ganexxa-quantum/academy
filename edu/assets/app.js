@@ -824,13 +824,19 @@
 
       if (form) {
         try {
+          // threshold 0.5 do ELEMENTO nunca é atingido quando o bloco é mais
+          // ALTO que a viewport — e é isso que acontece com o formulário num
+          // celular pequeno. O evento mais importante da Fase 2 morreria em
+          // silêncio justo na população que a campanha mais traz. Agora o IO
+          // avisa em qualquer interseção e QUEM DECIDE é a régua de retângulo,
+          // que já trata "elemento maior que a tela" (min(altura, viewport)).
           var ioF = new IntersectionObserver(function (entries) {
             for (var k2 = 0; k2 < entries.length; k2++) {
-              if (entries[k2].isIntersecting) { formView("io"); }
+              if (entries[k2].isIntersecting && formVisibleByRect(form)) formView("io");
             }
-          }, { threshold: 0.5 });
+          }, { threshold: [0, 0.25, 0.5] });
           ioF.observe(form);
-        } catch (e) { /* cai no fallback de rect abaixo */ }
+        } catch (e) { /* a régua no scroll/tick abaixo cobre sozinha */ }
       }
     }
 
@@ -843,7 +849,7 @@
         pending = false;
         tick();
         checkDepth();
-        if (form && !F2.formSeen && !F2.ioUsed && formVisibleByRect(form)) formView("rect");
+        if (form && !F2.formSeen && F2.visible && formVisibleByRect(form)) formView("rect");
       };
       if (typeof window.requestAnimationFrame === "function") window.requestAnimationFrame(run);
       else setTimeout(run, 100);
@@ -858,9 +864,10 @@
       setInterval(function () {
         tick();
         checkTime();
-        // primeira dobra já contém o form em telas grandes: sem scroll nenhum,
-        // o IO resolve; sem IO, esta batida resolve.
-        if (form && !F2.formSeen && !F2.ioUsed && formVisibleByRect(form)) formView("rect");
+        // Rede de segurança do evento mais importante: roda mesmo COM IO, porque
+        // um IO que nunca dispara é indistinguível de um form que ninguém viu.
+        // Só conta com a aba visível — form em aba de fundo não foi "visto".
+        if (form && !F2.formSeen && F2.visible && formVisibleByRect(form)) formView("tick");
       }, 1000);
     } catch (e) { /* no-op */ }
 
@@ -943,7 +950,7 @@
     // primeira medição imediata: quem não rola nada ainda produz um número
     tick();
     checkDepth();
-    if (form && !F2.ioUsed && formVisibleByRect(form)) formView("rect-boot");
+    if (form && F2.visible && formVisibleByRect(form)) formView("rect-boot");
   }
 
   // ---------- boot ----------
