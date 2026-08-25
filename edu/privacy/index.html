@@ -17,6 +17,21 @@
   sempre; o CONSENTIMENTO segue cobrindo o e-mail e o pixel do X — o
   único ponto em que dado sai para terceiro. Texto redigido por Kai,
   pendente de ratificação jurídica (ver FlagConsent.md).
+  REVISADA 2026-08-25 (run 20260825-pixel-fase2): o PIXEL DO X TAMBÉM
+  DESGATEOU, por decisão explícita do Bruno. Duas consequências que esta
+  página passa a declarar, porque a versão anterior prometia o contrário:
+  (1) o pixel carrega em TODA visita, sob legítimo interesse de medição de
+  campanha, e o script do X pode gravar cookies próprios; (2) a escolha do
+  banner deixou de decidir SE o dado existe e passou a decidir POR QUANTO
+  TEMPO — quem não aceita é expurgado em 120 dias por um job
+  agendado (cdp/retention/PurgeRetention.ts), e o número vem de
+  cdp/config/retention.json, o MESMO arquivo que o job lê. Também entram
+  aqui os eventos de leitura da Fase 2 (tempo engajado, rolagem, seções,
+  chegada ao formulário) — declarados no item 4, sem conteúdo digitado.
+  ATENÇÃO JURÍDICA: rodar pixel de terceiro sem consentimento é a decisão
+  mais exposta desta página. O prazo mitiga a RETENÇÃO, não a
+  TRANSFERÊNCIA. Texto redigido por Kai, pendente de ratificação jurídica
+  (ver PixelFase2.md, §risco).
   CSFP-safe: sem CDN, sem JS, stylesheet compartilhado.
 ============================================================ -->
 <html lang="pt-BR">
@@ -90,14 +105,20 @@
       </ul>
 
       <h2>2. Cookies, armazenamento local e pixel</h2>
-      <p>Usamos <strong>localStorage</strong> (não um cookie de rastreio) para o
-        identificador anônimo e para a sua escolha de consentimento. Se você aceitar no
-        banner, ativamos o <strong>pixel do X (Twitter)</strong> para medir o alcance do
-        conteúdo — o que envia um sinal de visita ao X. <strong>Se você recusar, o pixel
-        nunca é carregado e nada é enviado ao X.</strong> A nossa própria medição de visita
-        continua: ela é first-party, fica só com a gente, não vai para nenhum terceiro e leva
-        a marca da sua recusa (item 4). O opt-in de e-mail é
-        independente do banner: ele cobre só o envio de conteúdo por e-mail.</p>
+      <p>Usamos <strong>localStorage</strong> (não um cookie de rastreio) para o identificador
+        anônimo e para a sua escolha de consentimento — e <strong>só gravamos o identificador
+        no seu dispositivo se você aceitar</strong> no banner. Se você recusar, ou não
+        responder, ele existe apenas em memória, por carregamento de página: duas visitas suas
+        não podem ser ligadas uma à outra.</p>
+      <p>O <strong>pixel do X (Twitter)</strong> é carregado <strong>em toda visita</strong>,
+        para medir se o anúncio que trouxe você até aqui funcionou. Ele envia um sinal de
+        visita ao X, e o script do X pode gravar cookies próprios no seu navegador, sob a
+        política de privacidade do X. Dizemos isso com todas as letras porque a versão
+        anterior desta página prometia o contrário: <strong>a sua escolha no banner não
+        bloqueia esse carregamento</strong> — ela decide <strong>por quanto tempo</strong> os
+        seus dados ficam conosco (item 5) e se guardamos algo no seu dispositivo.</p>
+      <p>O opt-in de e-mail é independente do banner: ele cobre só o envio de conteúdo por
+        e-mail.</p>
 
       <h2>3. Finalidade</h2>
       <p>Usamos os dados para (a) enviar o conteúdo educacional que você pediu, (b)
@@ -107,16 +128,23 @@
       <h2>4. Base legal</h2>
       <p>Duas bases legais, cada uma no seu lugar:</p>
       <p>O <strong>consentimento</strong> (LGPD, art. 7º, I e art. 8º) cobre o
-        <strong>e-mail</strong> — dado ao enviar o formulário — e o <strong>pixel do X</strong>,
-        que só é ativado se você aceitar no banner, porque ele transfere um sinal seu a um
-        terceiro. Você pode retirar o consentimento a qualquer momento.</p>
-      <p>O <strong>legítimo interesse</strong> (LGPD, art. 7º, IX e art. 10) cobre a nossa
-        medição própria: o <strong>evento de visita</strong>, a <strong>contagem de
-        chegada</strong>, a <strong>captura de erro técnico</strong> e o <strong>registro da
-        sua escolha</strong> no banner. Tudo isso é first-party — fica com a gente, não é
-        cruzado com rastreadores de terceiros e não forma perfil. É a hipótese que a ANPD
-        nomeia para medição de audiência no Guia Orientativo de Cookies. Você pode se opor a
-        esse tratamento pelo contato do item 8 (LGPD, art. 18, §2º).</p>
+        <strong>e-mail</strong> — dado ao enviar o formulário. Você pode retirar o
+        consentimento a qualquer momento.</p>
+      <p>O <strong>legítimo interesse</strong> (LGPD, art. 7º, IX e art. 10) cobre a medição da
+        campanha: o <strong>evento de visita</strong>, a <strong>contagem de chegada</strong>,
+        os <strong>eventos de leitura</strong> (quanto tempo você ficou com a página em
+        primeiro plano, até onde rolou, quais seções entraram na tela e se chegou à área do
+        e-mail), a <strong>captura de erro técnico</strong>, o <strong>registro da sua
+        escolha</strong> no banner e o <strong>pixel do X</strong>. A finalidade é uma só e
+        está declarada: saber se o anúncio que trouxe você funcionou. Nada disso forma perfil
+        sobre você nem alimenta decisão automatizada, e do campo de e-mail nunca registramos o
+        que foi digitado — só se havia texto e o tamanho.</p>
+      <p>Legítimo interesse exige contrapartida concreta, então declaramos as duas que
+        aplicamos: (a) <strong>prazo</strong> — se você não aceitar no banner, os seus dados
+        são <strong>excluídos automaticamente em até 120 dias</strong>, sem você
+        precisar pedir (item 5); (b) <strong>oposição</strong> — você pode se opor a esse
+        tratamento a qualquer momento pelo contato do item 8 (LGPD, art. 18, §2º), e nesse
+        caso a exclusão é feita mediante pedido, sem esperar o prazo.</p>
       <p>O detalhe que costuma ficar escondido, declarado aqui: essa medição própria roda
         <strong>antes e independentemente do banner</strong> — a
         <strong>contagem de chegada</strong> e a <strong>captura de erro técnico</strong>
@@ -132,15 +160,24 @@
         do item 8 (LGPD, art. 18, §2º).</p>
 
       <h2>5. Retenção</h2>
-      <p>Guardamos os dados apenas pelo tempo necessário às finalidades acima, ou até você
-        pedir a exclusão. <strong>Não fixamos um prazo em dias</strong>: na prática, os dados
-        permanecem até que você peça a exclusão pelo contato abaixo — e o pedido é atendido.</p>
+      <p><strong>Se você aceitou no banner:</strong> guardamos os dados pelo tempo necessário às
+        finalidades do item 3, ou até você pedir a exclusão pelo contato do item 8.</p>
+      <p><strong>Se você recusou, ou não respondeu:</strong> os dados desta visita são
+        <strong>excluídos em até 120 dias</strong>, automaticamente, sem você
+        precisar pedir. Não é uma frase de efeito: é um trabalho agendado que apaga as linhas
+        correspondentes na nossa base. Não responder ao banner não é consentir — por isso o
+        prazo vale igual para quem recusou e para quem ignorou.</p>
+      <p><strong>O seu e-mail</strong>, se você se inscreveu, segue outra regra: fica até você
+        pedir descadastro ou exclusão, porque a base legal dele é o seu consentimento e não o
+        prazo acima.</p>
 
       <h2>6. Transferência internacional</h2>
       <p>Os eventos são processados e armazenados em infraestrutura do
         <strong>Google Cloud (BigQuery)</strong>, que pode envolver servidores nos
         <strong>Estados Unidos</strong>. O pixel do X também é operado fora do Brasil.
-        Adotamos essas transferências com base no seu consentimento e nas salvaguardas dos
+        Adotamos essas transferências com base no <strong>seu consentimento</strong>, no que
+        toca ao e-mail, e no <strong>legítimo interesse</strong> declarado no item 4 quanto à
+        medição da campanha — em ambos os casos apoiadas nas salvaguardas contratuais dos
         provedores.</p>
 
       <h2>7. Seus direitos (LGPD, art. 18)</h2>
@@ -201,12 +238,18 @@
 
       <h2>2. Cookies, local storage and pixel</h2>
       <p>We use <strong>localStorage</strong> (not a tracking cookie) for the anonymous
-        identifier and your consent choice. If you accept in the banner, we activate the
-        <strong>X (Twitter) pixel</strong> to measure content reach — which sends a visit
-        signal to X. <strong>If you decline, the pixel is never loaded and nothing is sent to
-        X.</strong> Our own page-view measurement continues: it is first-party, stays with us,
-        goes to no third party, and carries the mark of your refusal (section 4). The email opt-in is independent of the banner: it covers only sending
-        content by email.</p>
+        identifier and your consent choice — and we <strong>only store the identifier on your
+        device if you accept</strong> in the banner. If you decline, or do not answer, it lives
+        in memory only, per page load: two of your visits cannot be linked to each other.</p>
+      <p>The <strong>X (Twitter) pixel</strong> loads on <strong>every visit</strong>, to
+        measure whether the ad that brought you here worked. It sends a visit signal to X, and
+        X's script may set its own cookies in your browser under X's privacy policy. We say
+        this plainly because an earlier version of this page promised the opposite:
+        <strong>your choice in the banner does not block that load</strong> — it decides
+        <strong>how long</strong> your data stays with us (section 5) and whether we store
+        anything on your device.</p>
+      <p>The email opt-in is independent of the banner: it covers only sending content by
+        email.</p>
 
       <h2>3. Purpose</h2>
       <p>We use data to (a) send the educational content you requested, (b) understand the
@@ -216,16 +259,24 @@
       <h2>4. Legal basis</h2>
       <p>Two legal bases, each in its place:</p>
       <p><strong>Consent</strong> (LGPD art. 7, I and art. 8; GDPR art. 6(1)(a) for EU
-        visitors) covers your <strong>email</strong> — given by submitting the form — and the
-        <strong>X pixel</strong>, which is only activated if you accept in the banner, because
-        it transfers a signal about you to a third party. You may withdraw consent at any
-        time.</p>
+        visitors) covers your <strong>email</strong> — given by submitting the form. You may
+        withdraw consent at any time.</p>
       <p><strong>Legitimate interest</strong> (LGPD art. 7, IX and art. 10; GDPR art. 6(1)(f))
-        covers our own measurement: the <strong>page-view event</strong>, the <strong>arrival
-        count</strong>, the <strong>technical error capture</strong>, and the <strong>record of
-        your choice</strong> in the banner. All of it is first-party — it stays with us, is not
-        cross-referenced with third-party trackers, and builds no profile. You may object to
-        this processing via the contact in section 8.</p>
+        covers campaign measurement: the <strong>page-view event</strong>, the <strong>arrival
+        count</strong>, the <strong>reading events</strong> (how long you kept the page in the
+        foreground, how far you scrolled, which sections entered the screen and whether you
+        reached the email area), the <strong>technical error capture</strong>, the
+        <strong>record of your choice</strong> in the banner, and the <strong>X pixel</strong>.
+        There is a single declared purpose: knowing whether the ad that brought you here
+        worked. None of it builds a profile about you or feeds an automated decision, and from
+        the email field we never record what was typed — only whether there was text and how
+        long it was.</p>
+      <p>Legitimate interest demands a concrete counterpart, so we declare the two we apply:
+        (a) <strong>a deadline</strong> — if you do not accept in the banner, your data is
+        <strong>deleted automatically within 120 days</strong>, with no request
+        needed (section 5); (b) <strong>objection</strong> — you may object to this processing
+        at any time through the contact in section 8, and in that case deletion happens on
+        request, without waiting for the deadline.</p>
       <p>The part usually left hidden, declared here: this own measurement runs
         <strong>before and independently of the banner</strong> — including the
         <strong>arrival count</strong> and the <strong>technical error capture</strong>
@@ -240,15 +291,26 @@
         processing through the contact in section 8.</p>
 
       <h2>5. Retention</h2>
-      <p>We keep data only as long as needed for the purposes above, or until you request
-        deletion. <strong>We do not set a fixed number of days</strong>: in practice the data
-        stays until you ask for deletion through the contact below — and the request is honoured.</p>
+      <p><strong>If you accepted in the banner:</strong> we keep the data as long as needed for
+        the purposes in section 3, or until you request deletion through the contact in
+        section 8.</p>
+      <p><strong>If you declined, or did not answer:</strong> the data from this visit is
+        <strong>deleted within 120 days</strong>, automatically, with no request
+        needed. This is not a figure of speech: it is a scheduled job that removes the
+        corresponding rows from our store. Not answering the banner is not consenting — which
+        is why the deadline applies equally to those who declined and those who ignored it.</p>
+      <p><strong>Your email</strong>, if you subscribed, follows a different rule: it stays
+        until you ask to unsubscribe or to be deleted, because its legal basis is your consent
+        and not the deadline above.</p>
 
       <h2>6. International transfer</h2>
       <p>Events are processed and stored on <strong>Google Cloud (BigQuery)</strong>
         infrastructure, which may involve servers in the <strong>United States</strong>. The
-        X pixel is also operated outside Brazil. We make these transfers based on your
-        consent and the providers' safeguards.</p>
+        X pixel is also operated outside Brazil. We make these transfers based on
+        <strong>your consent</strong> as far as the email is concerned, and on the
+        <strong>legitimate interest</strong> declared in section 4 as far as campaign
+        measurement is concerned — in both cases supported by the providers' contractual
+        safeguards.</p>
 
       <h2>7. Your rights (LGPD art. 18 / GDPR)</h2>
       <p>You may request: confirmation and access; correction; anonymisation, blocking or
@@ -310,12 +372,19 @@
 
       <h2>2. Cookies, almacenamiento local y pixel</h2>
       <p>Usamos <strong>localStorage</strong> (no una cookie de rastreo) para el identificador
-        anónimo y tu elección de consentimiento. Si aceptas en el banner, activamos el
-        <strong>pixel de X (Twitter)</strong> para medir el alcance del contenido — lo que
-        envía una señal de visita a X. <strong>Si rechazas, el pixel nunca se carga y no se
-        envía nada a X.</strong> Nuestra propia medición de visita continúa: es first-party, se
-        queda con nosotros, no va a ningún tercero y lleva la marca de tu rechazo (punto 4). El opt-in del correo es independiente del banner:
-        cubre solo el envío de contenido por correo.</p>
+        anónimo y tu elección de consentimiento — y <strong>solo guardamos el identificador en
+        tu dispositivo si aceptas</strong> en el banner. Si rechazas, o no respondes, existe
+        únicamente en memoria, por carga de página: dos visitas tuyas no pueden vincularse
+        entre sí.</p>
+      <p>El <strong>pixel de X (Twitter)</strong> se carga <strong>en cada visita</strong>, para
+        medir si el anuncio que te trajo hasta aquí funcionó. Envía una señal de visita a X, y
+        el script de X puede guardar cookies propias en tu navegador, bajo la política de
+        privacidad de X. Lo decimos con todas las letras porque una versión anterior de esta
+        página prometía lo contrario: <strong>tu elección en el banner no bloquea esa
+        carga</strong> — decide <strong>cuánto tiempo</strong> tus datos se quedan con nosotros
+        (punto 5) y si guardamos algo en tu dispositivo.</p>
+      <p>El opt-in del correo es independiente del banner: cubre solo el envío de contenido por
+        correo.</p>
 
       <h2>3. Finalidad</h2>
       <p>Usamos los datos para (a) enviarte el contenido educativo que pediste, (b) entender
@@ -326,15 +395,23 @@
       <p>Dos bases legales, cada una en su lugar:</p>
       <p>El <strong>consentimiento</strong> (LGPD art. 7, I y art. 8; GDPR art. 6(1)(a) para
         visitantes de la UE) cubre tu <strong>correo</strong> — otorgado al enviar el
-        formulario — y el <strong>pixel de X</strong>, que solo se activa si aceptas en el
-        banner, porque transfiere una señal tuya a un tercero. Puedes retirar el consentimiento
-        en cualquier momento.</p>
+        formulario. Puedes retirar el consentimiento en cualquier momento.</p>
       <p>El <strong>interés legítimo</strong> (LGPD art. 7, IX y art. 10; GDPR art. 6(1)(f))
-        cubre nuestra medición propia: el <strong>evento de visita</strong>, el <strong>conteo
-        de llegada</strong>, la <strong>captura de error técnico</strong> y el <strong>registro
-        de tu elección</strong> en el banner. Todo es first-party — se queda con nosotros, no se
-        cruza con rastreadores de terceros y no elabora perfiles. Puedes oponerte a este
-        tratamiento por el contacto del punto 8.</p>
+        cubre la medición de la campaña: el <strong>evento de visita</strong>, el
+        <strong>conteo de llegada</strong>, los <strong>eventos de lectura</strong> (cuánto
+        tiempo mantuviste la página en primer plano, hasta dónde bajaste, qué secciones
+        entraron en pantalla y si llegaste al área del correo), la <strong>captura de error
+        técnico</strong>, el <strong>registro de tu elección</strong> en el banner y el
+        <strong>pixel de X</strong>. La finalidad es una sola y está declarada: saber si el
+        anuncio que te trajo funcionó. Nada de eso elabora un perfil sobre ti ni alimenta una
+        decisión automatizada, y del campo de correo nunca registramos lo que se escribió —
+        solo si había texto y su longitud.</p>
+      <p>El interés legítimo exige una contrapartida concreta, así que declaramos las dos que
+        aplicamos: (a) <strong>plazo</strong> — si no aceptas en el banner, tus datos se
+        <strong>eliminan automáticamente en un plazo de 120 días</strong>, sin
+        que tengas que pedirlo (punto 5); (b) <strong>oposición</strong> — puedes oponerte a
+        este tratamiento en cualquier momento por el contacto del punto 8, y en ese caso la
+        eliminación se hace a petición, sin esperar el plazo.</p>
       <p>La parte que suele quedar escondida, declarada aquí: esa medición propia se ejecuta
         <strong>antes del banner y con independencia de él</strong> — incluidos el
         <strong>conteo de llegada</strong> y la <strong>captura de error técnico</strong>
@@ -349,17 +426,26 @@
         este tratamiento por el contacto del punto 8.</p>
 
       <h2>5. Retención</h2>
-      <p>Conservamos los datos solo el tiempo necesario para las finalidades anteriores, o hasta
-        que solicites la eliminación. <strong>No fijamos un plazo en días</strong>: en la práctica
-        los datos permanecen hasta que solicites la eliminación por el contacto de abajo — y la
-        solicitud se atiende.</p>
+      <p><strong>Si aceptaste en el banner:</strong> conservamos los datos el tiempo necesario
+        para las finalidades del punto 3, o hasta que solicites la eliminación por el contacto
+        del punto 8.</p>
+      <p><strong>Si rechazaste, o no respondiste:</strong> los datos de esta visita se
+        <strong>eliminan en un plazo de 120 días</strong>, automáticamente, sin
+        que tengas que pedirlo. No es una frase hecha: es un trabajo programado que borra las
+        filas correspondientes en nuestra base. No responder al banner no es consentir — por eso
+        el plazo vale igual para quien rechazó y para quien lo ignoró.</p>
+      <p><strong>Tu correo</strong>, si te suscribiste, sigue otra regla: permanece hasta que
+        pidas la baja o la eliminación, porque su base legal es tu consentimiento y no el plazo
+        anterior.</p>
 
       <h2>6. Transferencia internacional</h2>
       <p>Los eventos se procesan y almacenan en infraestructura de
         <strong>Google Cloud (BigQuery)</strong>, lo que puede implicar servidores en
         <strong>Estados Unidos</strong>. El pixel de X también opera fuera de Brasil. Realizamos
-        estas transferencias con base en tu consentimiento y en las salvaguardas de los
-        proveedores.</p>
+        estas transferencias con base en <strong>tu consentimiento</strong> en lo que respecta
+        al correo, y en el <strong>interés legítimo</strong> declarado en el punto 4 en lo que
+        respecta a la medición de la campaña — en ambos casos apoyadas en las salvaguardas
+        contractuales de los proveedores.</p>
 
       <h2>7. Tus derechos (LGPD art. 18 / GDPR)</h2>
       <p>Puedes solicitar: confirmación y acceso; corrección; anonimización, bloqueo o
